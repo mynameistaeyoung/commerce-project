@@ -1,46 +1,50 @@
-import { Link } from "react-router-dom"
-import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 const Login = () => {
     return (
-        <div className="flex flex-row items-center justify-center min-h-screen">
-            <h1
-                className="text-4xl font-bold font-GmarketSansMedium mb-8">
-                패션앱에 오신것을 환영합니다!
-            </h1>
-            <form className="bg-white p-8 rounded-lg shadow-md w-full max-w-md ml-10">
+        <div className="min-h-screen flex flex-row justify-center items-center gap-10 max-w-screen-lg min-w-[800px] mx-auto">
+            <div>
+                <h1 className="text-3xl font-bold mb-8">패션앱에 오신 것을 환영합니다!</h1>
+            </div>
+
+            <div className="w-full max-w-xs">
                 <div className="mb-4">
-                    <label
-                        htmlFor="user_id"
-                        className="font-GmarketSansMedium flex mt-3" >아이디</label>
-                    <input
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+                        아이디
+                    </label>
+                    <Input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border-gray-300"
+                        id="username"
                         type="text"
-                        id="user_id"
-                        className="rounded-custom border border-gray-300 w-full py-2" />
+                        placeholder="아이디를 입력해주세요!"
+                    />
                 </div>
-                <div className="mb-4">
-                    <label
-                        htmlFor="user_password"
-                        className="font-GmarketSansMedium flex mt-3"
-                    >비밀번호</label>
-                    <input
+
+                <div className="mb-6">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                        비밀번호
+                    </label>
+                    <Input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline border-gray-300"
+                        id="password"
                         type="password"
-                        id="user_password"
-                        className="rounded-custom border border-gray-300 w-full py-2 " />
+                        placeholder="비밀번호를 입력해주세요!"
+                    />
                 </div>
 
-                <div className="flex mt-5">
-                    <Button
-                        className="font-GmarketSansMedium rounded-custom border border-black bg-black text-white w-full py-2">
+                <div className="items-center justify-between">
+                    <button
+                        className="bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                        type="button">
                         로그인
-                    </Button>
+                    </button>
+                    <Link
+                        to={"/register"}>회원가입</Link>
                 </div>
-                <Link className="font-GmarketSansMedium mt-4 hover:underline"
-                    to={"/register"}>회원가입</Link>
-            </form>
-
+            </div>
         </div>
-    )
+    );
 }
 
-export default Login
+export default Login;
