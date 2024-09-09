@@ -2,12 +2,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"
-import { addDoc, collection } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebase";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-
+import useUserStore from "@/zustand/bearsStore";
 
 
 const Register = () => {
@@ -47,16 +47,15 @@ const Register = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      const collectionRef = collection(db, "user")
-      const docRef = await addDoc(collectionRef, {
+      await setDoc(doc(db, 'user', user.uid), {
         date: date,
         email: email,
         name: name,
         number: number,
         uid: user.uid,
-        seller: seller
+        seller: seller,
       });
-      console.log("Document written with ID: ", docRef.id);
+      console.log("Document written with ID: ");
       navigate("/login");
     } catch (error: any) {
       console.log("에러 발생", error.message, error.code);
@@ -88,7 +87,7 @@ const Register = () => {
           </Label>
           <Input
             id="user_create_email"
-            type="text"
+            type="email"
             placeholder="이메일을 입력해주세요!"
             value={email}
             onChange={onChange}
@@ -145,7 +144,7 @@ const Register = () => {
           <Input
             id="user_create_number"
             type="text"
-            placeholder="비밀번호를 입력해주세요!"
+            placeholder="전화번호를 입력해주세요!"
             value={number}
             onChange={onChange}
           />
