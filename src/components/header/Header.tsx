@@ -11,7 +11,6 @@ const Header = () => {
     const { user } = useUserStore();
     const FoundUser = user.filter(item => item.uid === userUid)
 
-
     const navigate = useNavigate();
 
     const logOut = async (e: any) => {
@@ -28,8 +27,8 @@ const Header = () => {
         FoundUser.length > 0 ? navigate("/mypage") : alert("로그인이 필요한 서비스입니다.")
 
     useEffect(() => {
-        FoundUser.length === 1 ? null : navigate("/")
-    }, [FoundUser.length])
+        userUid === null ? navigate("/") : null
+    }, [])
 
     return (
         <div className="w-[60%] mx-auto">
