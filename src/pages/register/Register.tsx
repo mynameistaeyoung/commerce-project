@@ -12,6 +12,8 @@ import useUserStore from "@/zustand/bearsStore";
 
 const Register = () => {
 
+  const { setUser } = useUserStore()
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("")
@@ -55,6 +57,14 @@ const Register = () => {
         uid: user.uid,
         seller: seller,
       });
+      setUser({
+        date: date,
+        email: email,
+        name: name,
+        number: number,
+        uid: user.uid,
+        seller: seller,
+      })
       console.log("Document written with ID: ");
       navigate("/login");
     } catch (error: any) {
