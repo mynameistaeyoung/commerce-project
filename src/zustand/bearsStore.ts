@@ -7,7 +7,7 @@ interface User {
     name: string;
     number: string;
     uid: string;
-    seller: boolean;
+    seller: boolean |string;
 }
 
 export interface GoodsItem {
@@ -25,6 +25,7 @@ interface UserStore {
     setUser: (userData: User) => void;
     setGoods: (goodsData: GoodsItem) => void;
     updateGoods: (updatedGoods: GoodsItem) => void;
+    updateUser: (updatedUser: User) => void;
 }
 
 const useUserStore = create<UserStore>()(
@@ -39,6 +40,11 @@ const useUserStore = create<UserStore>()(
             updateGoods: (updatedGoods: GoodsItem) => set((state) => ({
                 goods: state.goods.map((item) =>
                     item.ProductUid === updatedGoods.ProductUid ? updatedGoods : item
+                ),
+            })),
+            updateUser: (updatedUser: User) => set((state) => ({
+                user: state.user.map((item) =>
+                    item.uid === updatedUser.uid ? updatedUser : item
                 ),
             })),
         }),
