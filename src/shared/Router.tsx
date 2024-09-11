@@ -18,7 +18,7 @@ const Router = () => {
         <Route path="/mypage" element={<Mypage />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/productDetail/:ProductUid" element={<ProductDetail />} />
-        <Route path="/retouchProduct" element={<RetouchProduct />} />
+        <Route path="/retouchProduct/:ProductUid" element={<RetouchProduct />} />
       </Routes>
     </BrowserRouter>
   )
