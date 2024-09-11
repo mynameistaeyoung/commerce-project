@@ -1,13 +1,17 @@
 import Header from "@/components/header/Header"
 import useUserStore from "@/zustand/bearsStore"
 import { auth } from "../../firebase"
+import { useState } from "react"
+import BgChangButton from '../../components/ui/BgChangeButton';
 
 const Mypage = () => {
 
     const userUid = auth.currentUser?.uid
     const { user } = useUserStore();
-    const FoundUser = user.filter(item => item.uid === userUid)
+    const FoundUser = user.find(item => item.uid === userUid)
 
+    const [activeMenu, setActiveMenu] = useState('내 정보');
+    const menuItems = ['내 정보', '비밀번호 변경', '찜한항목', '장바구니'];
     return (
         <>
             <Header />
@@ -16,23 +20,27 @@ const Mypage = () => {
                     <div className="border-r border-black max-w-[150px] h-[600px]">
                         <button
                             className="text-2xl mb-[30px] ">마이페이지</button>
-                        <button
-                            className="text-xl mb-[10px] hover:bg-gray-300 active:bg-gray-300 w-[148px] text-left">내 정보</button>
-                        <button
-                            className="text-xl mb-[10px] hover:bg-gray-300 active:bg-gray-300 w-[148px] text-left">비밀번호 변경</button>
-                        <button
-                            className="text-xl mb-[10px] hover:bg-gray-300 active:bg-gray-300 w-[148px] text-left">찜한항목</button>
-                        <button
-                            className="text-xl mb-[10px] hover:bg-gray-300 active:bg-gray-300 w-[148px] text-left">장바구니</button>
+                        {menuItems.map(item => (
+                            <BgChangButton
+                                key={item}
+                                title={item}
+                                activeMenu={activeMenu}
+                                setActiveMenu={setActiveMenu}
+                            />
+                        ))}
                     </div>
 
-                    <div>
+                    <section>
                         <h2 className="text-3xl mb-[30px] ml-[30px]">내 정보</h2>
-                        <div className="text-xl mb-[20px] ml-[30px]">이메일 : {FoundUser[0]?.email}</div>
-                        <div className="text-xl mb-[20px] ml-[30px]">이름 : {FoundUser[0]?.name}</div>
-                        <div className="text-xl mb-[20px] ml-[30px]">전화번호 : {FoundUser[0]?.number}</div>
-                        <div className="text-xl mb-[20px] ml-[30px]">생년월일 : {FoundUser[0]?.date}</div>
-                    </div>
+                        {FoundUser ? (
+                            <div>
+                                <h3 className="text-xl mb-[20px] ml-[30px]">이메일 : {FoundUser.email}</h3>
+                                <h3 className="text-xl mb-[20px] ml-[30px]">이름 : {FoundUser.name}</h3>
+                                <h3 className="text-xl mb-[20px] ml-[30px]">전화번호 : {FoundUser.number}</h3>
+                                <h3 className="text-xl mb-[20px] ml-[30px]">생년월일 : {FoundUser.date}</h3>
+                            </div>
+                        ) : null}
+                    </section>
                 </div>
             </div>
         </>
