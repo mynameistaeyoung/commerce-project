@@ -21,9 +21,10 @@ export interface GoodsItem {
 
 interface UserStore {
     user: User[];  // 여러 사용자를 배열로 저장
-    setUser: (userData: User) => void;
     goods: GoodsItem[];
+    setUser: (userData: User) => void;
     setGoods: (goodsData: GoodsItem) => void;
+    updateGoods: (updatedGoods: GoodsItem) => void;
 }
 
 const useUserStore = create<UserStore>()(
@@ -31,8 +32,15 @@ const useUserStore = create<UserStore>()(
         (set) => ({
             user: [],
             goods: [],
-            setUser: (userData: User) => set((state) => ({ user: [...state.user, userData] })),  // 새로운 유저 데이터를 배열에 추가
-            setGoods: (goodsData: GoodsItem) => set((state) => ({ goods: [...state.goods, goodsData] }))  // 새로운 상품 데이터를 배열에 추가
+            setUser: (userData: User) => set((state) =>
+                ({ user: [...state.user, userData] })),
+            setGoods: (goodsData: GoodsItem) => set((state) =>
+                ({ goods: [...state.goods, goodsData] })),
+            updateGoods: (updatedGoods: GoodsItem) => set((state) => ({
+                goods: state.goods.map((item) =>
+                    item.ProductUid === updatedGoods.ProductUid ? updatedGoods : item
+                ),
+            })),
         }),
         {
             name: 'user-storage',
