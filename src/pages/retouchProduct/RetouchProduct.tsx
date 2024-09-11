@@ -4,33 +4,78 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { doc, updateDoc } from "firebase/firestore";
-import {db} from "../../firebase"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Storage 관련 함수 추가
+import { db, storage } from "../../firebase"
+import { useParams } from "react-router-dom"
+import useUserStore from "@/zustand/bearsStore"
+import { useNavigate } from "react-router-dom"
 
 const RetouchProduct = () => {
+
+  const { goods, updateGoods } = useUserStore()
+  const { ProductUid } = useParams();
+  const FoundGoods = goods.find(item => item.ProductUid === ProductUid)
+
   const [showImages, setShowImages] = useState<string | ArrayBuffer | null>(null);
-  const [uploading, setUploading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [changeProductName, setChangeProductName] = useState(`${FoundGoods?.ProductName}`)
+  const [changeProductURL, setChangeProductURL] = useState(`${FoundGoods?.ProductURL}`)
+  const [changeProductDescription, setChangeProductDescription] = useState(`${FoundGoods?.ProductDescription}`)
+  const [changeProductPrice, setChangeProductPrice] = useState(`${FoundGoods?.ProductPrice}`)
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-
       const reader = new FileReader();
       reader.onloadend = () => {
         setShowImages(reader.result);
+        setChangeProductURL(reader.result as string);
       };
       reader.readAsDataURL(file);
       console.log("업로드성공!")
     }
   }
 
+  const navigate = useNavigate()
+
+  const onClickUpdateProductButton = async (e: any) => {
+    e.preventDefault();
+    try {
+      let productImageUrl = changeProductURL;
+      if (selectedFile) {
+        const storageRef = ref(storage, `product/${ProductUid}`);
+        await uploadBytes(storageRef, selectedFile);
+        productImageUrl = await getDownloadURL(storageRef);
+      }
+      const uid = ProductUid
+      const ProductUpdateRef = doc(db, "goods", uid!)
+      await updateDoc(ProductUpdateRef, {
+        ProductURL: changeProductURL,
+        ProductName: changeProductName,
+        ProductDescription: changeProductDescription,
+        ProductPrice: changeProductPrice
+      })
+      updateGoods({
+        ProductUid: ProductUid,
+        ProductURL: changeProductURL,
+        ProductName: changeProductName,
+        ProductDescription: changeProductDescription,
+        ProductPrice: changeProductPrice,
+        UserUid: FoundGoods?.UserUid,
+      })
+      navigate("/")
+    } catch (error) {
+      alert("업데이트중 에러발생")
+      console.log("업데이트중 에러발생", error)
+    }
+  }
 
   return (
     <>
       <Header />
       <div className="w-[60%] mx-auto pt-6">
-        <h1 className="text-bold text-3xl mb-10 flex justify-center">상품등록하기</h1>
+        <h1 className="text-bold text-3xl mb-10 flex justify-center">상품정보 수정하기</h1>
         <div className="flex justify-between mb-10 gap-[30px]">
           <div className="flex-1">
             <Label>등록할 상품 사진</Label>
@@ -39,7 +84,7 @@ const RetouchProduct = () => {
                 {showImages ? (
                   <img src={showImages as string} className="w-[80%] aspect-[1/1]" alt="Uploaded Preview" />
                 ) : (
-                  <img src="/free-icon-addition-thick-symbol-20183.png" className="w-[30%]" alt="Placeholder" />
+                  <img src={changeProductURL} className="w-[80%] aspect-[1/1]" alt="Placeholder" />
                 )}
               </label>
               <input
@@ -50,7 +95,6 @@ const RetouchProduct = () => {
                 onChange={handleImageChange} // 이미지 변경 핸들러
               />
             </div>
-            {uploading && <p className="mt-2 text-black">이미지 업로드 중...</p>} {/* 업로드 상태 표시 */}
           </div>
           <div className="flex-1">
             <div>
@@ -59,7 +103,8 @@ const RetouchProduct = () => {
                 className=" border-gray-400 mb-5"
                 type="text"
                 id="change-product-name"
-              // onChange에서 직접 처리
+                value={changeProductName}
+                onChange={(e) => { setChangeProductName(e.target.value) }}
               />
             </div>
             <div>
@@ -69,7 +114,8 @@ const RetouchProduct = () => {
                   className="border-0 focus:outline-none focus:ring-0 w-full"
                   type="text"
                   id="change-product-description"
-                // onChange에서 직접 처리
+                  value={changeProductDescription}
+                  onChange={(e) => { setChangeProductDescription(e.target.value) }}
                 />
               </div>
             </div>
@@ -79,12 +125,13 @@ const RetouchProduct = () => {
                 className=" border-gray-400 mb-5"
                 type="number"
                 id="change-product-price"
-              // onChange에서 직접 처리
+                value={changeProductPrice}
+                onChange={(e) => setChangeProductPrice(e.target.value)}
               />
             </div>
           </div>
         </div>
-        <Button className="w-full h-[80px] bg-black">수정하기</Button>
+        <Button className="w-full h-[80px] bg-black" onClick={onClickUpdateProductButton}>수정하기</Button>
       </div>
     </>
   )
