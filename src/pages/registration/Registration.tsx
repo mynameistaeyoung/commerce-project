@@ -6,11 +6,14 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { storage } from "../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { setDoc,doc } from "firebase/firestore"
-import {auth,db} from "../../firebase"
+import { setDoc, doc } from "firebase/firestore"
+import { auth, db } from "../../firebase"
 import uuid from 'react-uuid'
+import useUserStore from "@/zustand/bearsStore"
 
 const Registration = () => {
+
+    const { setGoods } = useUserStore()
 
     const [productName, setProductName] = useState("")
     const [productDescription, setProductDescription] = useState("")
@@ -29,21 +32,29 @@ const Registration = () => {
             return;
         }
 
-        const storageRef = ref(storage, `images/${selectedFile.name}`);
         const productUuid = uuid();
+        const storageRef = ref(storage, `images/${uuid()}`);
         try {
             const snapshot = await uploadBytes(storageRef, selectedFile);
             console.log("업로드 성공:", snapshot);
             const uid = auth.currentUser?.uid
             const downloadURL = await getDownloadURL(snapshot.ref);
-            await setDoc(doc(db, 'goods',productUuid), {
-                ProductDescription : productDescription,
+            await setDoc(doc(db, 'goods', productUuid), {
+                ProductDescription: productDescription,
                 ProductName: productName,
                 ProductPrice: productPrice,
-                ProductURL:downloadURL,
-                UserUid:uid,
-                ProductUid:productUuid
+                ProductURL: downloadURL,
+                UserUid: uid,
+                ProductUid: productUuid
             });
+            setGoods({
+                ProductDescription: productDescription,
+                ProductName: productName,
+                ProductPrice: productPrice,
+                ProductURL: downloadURL,
+                UserUid: uid,
+                ProductUid: productUuid
+            })
             navigate("/");
         } catch (error) {
             console.log("업로드 중 에러 발생:", error);
@@ -55,11 +66,11 @@ const Registration = () => {
     const handleImageChange = (e: any) => {
         const file = e.target.files[0];
         if (file) {
-            setSelectedFile(file); 
+            setSelectedFile(file);
 
             const reader = new FileReader();
             reader.onloadend = () => {
-                setShowImages(reader.result); 
+                setShowImages(reader.result);
             };
             reader.readAsDataURL(file);
             console.log("업로드성공!")
