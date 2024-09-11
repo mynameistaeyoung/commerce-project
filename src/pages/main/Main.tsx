@@ -4,13 +4,10 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase"
 import { GoodsItem } from "@/zustand/bearsStore";
 import { useNavigate } from "react-router-dom";
-import useUserStore from "@/zustand/bearsStore";
-
 
 const Main = () => {
     const [product, setProduct] = useState<GoodsItem[]>([])
     
-
     const navigate = useNavigate()
     useEffect(() => {
         const fetchData = async () => {
