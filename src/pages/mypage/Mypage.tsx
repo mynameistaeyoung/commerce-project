@@ -27,7 +27,7 @@ const Mypage = () => {
                     </div>
 
                     <div>
-                        <h1 className="text-3xl mb-[30px] ml-[30px]">내 정보 </h1>
+                        <h2 className="text-3xl mb-[30px] ml-[30px]">내 정보</h2>
                         <div className="text-xl mb-[20px] ml-[30px]">이메일 : {FoundUser[0]?.email}</div>
                         <div className="text-xl mb-[20px] ml-[30px]">이름 : {FoundUser[0]?.name}</div>
                         <div className="text-xl mb-[20px] ml-[30px]">전화번호 : {FoundUser[0]?.number}</div>
