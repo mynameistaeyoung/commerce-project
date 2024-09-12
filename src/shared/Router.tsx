@@ -6,6 +6,7 @@ import Mypage from "@/pages/mypage/Mypage"
 import Registration from "@/pages/registration/Registration"
 import ProductDetail from "@/pages/productDetail/ProductDetail"
 import RetouchProduct from "@/pages/retouchProduct/RetouchProduct"
+import Like from "@/pages/mypage/Like"
 
 
 const Router = () => {
@@ -19,6 +20,7 @@ const Router = () => {
         <Route path="/registration" element={<Registration />} />
         <Route path="/productDetail/:ProductUid" element={<ProductDetail />} />
         <Route path="/retouchProduct/:ProductUid" element={<RetouchProduct />} />
+        <Route path="/like" element={<Like />} />
       </Routes>
     </BrowserRouter>
   )
