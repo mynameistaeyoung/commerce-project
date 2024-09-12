@@ -4,12 +4,18 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase"
 import { GoodsItem } from "@/zustand/bearsStore";
 import { useNavigate } from "react-router-dom";
+import useUserStore from "@/zustand/bearsStore";
 
 const Main = () => {
     const [product, setProduct] = useState<GoodsItem[]>([])
-    
+    const { goods, setGoods } = useUserStore();
+
     const navigate = useNavigate()
     useEffect(() => {
+        if (goods.length > 0) {
+            setProduct(goods); 
+            return;
+        }
         const fetchData = async () => {
             try {
                 const querySnapshot = await getDocs(collection(db, "goods"));
@@ -17,6 +23,7 @@ const Main = () => {
                 querySnapshot.forEach((doc) => {
                     const data = doc.data() as GoodsItem
                     goodsArr.push(data)
+                    setGoods(data)
                 });
                 setProduct(goodsArr)
             } catch (error) {
@@ -31,7 +38,7 @@ const Main = () => {
             <Header />
             <ul className="w-[60%] mx-auto mt-[40px] grid grid-cols-4 gap-[30px]">
                 {product.map((item) => (
-                    <li key={item.ProductUid} className="font-bold cursor-pointer" onClick={()=>{navigate(`/productDetail/${item.ProductUid}`)}}>
+                    <li key={item.ProductUid} className="font-bold cursor-pointer" onClick={() => { navigate(`/productDetail/${item.ProductUid}`) }}>
                         <img src={item.ProductURL} className="aspect-1/1" />
                         <p>{item.ProductName}</p>
                         <p>{item.ProductPrice}원</p>
