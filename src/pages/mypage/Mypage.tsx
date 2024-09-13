@@ -2,10 +2,10 @@ import Header from "@/components/header/Header"
 import useUserStore from "@/zustand/bearsStore"
 import { auth, db } from "../../firebase"
 import { useState } from "react"
-import BgChangButton from '../../components/ui/BgChangeButton';
 import { Button } from "@/components/ui/button";
 import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import Collect from "./Collect";
 
 
 const Mypage = () => {
@@ -19,8 +19,6 @@ const Mypage = () => {
     const [changeUserEmail, setChangeUserEmail] = useState(`${FoundUser?.email}`)
     const [changeUserSeller, setChangeUserSeller] = useState(`${FoundUser?.seller}`)
     const [changeUserUid, setChangeUserUid] = useState(`${FoundUser?.uid}`)
-    const [activeMenu, setActiveMenu] = useState('내 정보');
-    const menuItems = ['내 정보', '비밀번호 변경', '찜한항목', '장바구니'];
 
     const navigate = useNavigate()
 
@@ -50,7 +48,6 @@ const Mypage = () => {
         } catch (error) {
             console.log("정보를 바꾸는데 실패했습니다", error)
         }
-
     };
 
     return (
@@ -58,19 +55,7 @@ const Mypage = () => {
             <Header />
             <div className="w-[60%] mx-auto pt-6">
                 <div className="flex">
-                    <div className="border-r border-black max-w-[150px] h-[600px]">
-                        <button
-                            className="text-2xl mb-[30px] ">마이페이지</button>
-                        {menuItems.map(item => (
-                            <BgChangButton
-                                key={item}
-                                title={item}
-                                activeMenu={activeMenu}
-                                setActiveMenu={setActiveMenu}
-                            />
-                        ))}
-                    </div>
-
+                    <Collect/>
                     <section>
                         <h2 className="text-3xl mb-[30px] ml-[30px]">내 정보</h2>
                         {FoundUser ? (
@@ -96,7 +81,6 @@ const Mypage = () => {
                                         value={changeUserDate} onChange={(e) => { setChangeUserDate(e.target.value) }} />
                                 </div>
                             </div>
-
                         ) : null}
                         <div className="flex justify-end">
                             <Button onClick={changeUserProfileButton}>수정하기</Button>
