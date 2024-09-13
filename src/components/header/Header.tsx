@@ -33,7 +33,7 @@ const Header = () => {
     return (
         <div className="w-[60%] mx-auto">
             <div className="flex justify-end">
-                {FoundUser[0]?.seller === true || "true" ?
+                {FoundUser[0]?.seller === true ?
                     <div className="flex">
                         <button onClick={registrationRoot} className="mr-2">상품등록하기</button>
                         <div>|</div>
