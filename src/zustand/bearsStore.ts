@@ -16,7 +16,7 @@ export interface GoodsItem {
     ProductPrice: string;
     ProductURL: string;
     UserUid: string | undefined;
-    ProductUid: string | undefined;
+    ProductUid: string ;
 }
 
 export interface ProductLike {
@@ -61,7 +61,7 @@ const useUserStore = create<UserStore>()(
         }),
         {
             name: 'user-storage',
-            storage: createJSONStorage(() => sessionStorage),
+            storage: createJSONStorage(() => localStorage),
         }
     )
 );
