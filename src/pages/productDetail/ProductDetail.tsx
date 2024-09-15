@@ -23,7 +23,7 @@ const ProductDetail = () => {
                 const likeRef = doc(db, "likes", `${userUid}_${ProductUid}`);
                 const likeDoc = await getDoc(likeRef);
                 if (likeDoc.exists()) {
-                    setClicked(likeDoc.data().like); 
+                    setClicked(likeDoc.data().like);
                 }
             }
         };
@@ -31,7 +31,7 @@ const ProductDetail = () => {
         checkLikeStatus();
     }, [userUid, ProductUid]);
 
-    
+
     const ProductDeleteButton = async (e: any) => {
         e.preventDefault();
         try {
@@ -74,6 +74,26 @@ const ProductDetail = () => {
         }
     };
 
+    const onClickMyPockeyButton = async (e: any) => {
+        e.preventDefault();
+        const pocketRef = doc(db, "pocket", `${userUid}_${ProductUid}`);
+        try {
+            if (FoundGoods && FoundGoods.ProductName) {
+                await setDoc(pocketRef, {
+                    ProductName: FoundGoods.ProductName,
+                    ProductUid: ProductUid,
+                    ProductPrice:FoundGoods.ProductPrice
+                });
+                console.log("포켓에 저장되었습니다.");
+                alert("장바구니 담기 완료!")
+            } else {
+                console.error("FoundGoods 또는 FoundGoods.ProductName이 유효하지 않습니다.");
+            }
+        } catch (error) {
+            console.error("포켓에 저장 중 오류 발생:", error);
+        }
+    };
+
     return (
         <>
             <Header />
@@ -99,7 +119,7 @@ const ProductDetail = () => {
                                     alt="찜하기 아이콘"
                                 />
                                 <Button className="mr-3">구매하기</Button>
-                                <Button>장바구니</Button>
+                                <Button onClick={onClickMyPockeyButton}>장바구니</Button>
                             </div>
                         </div>
                     </div>
