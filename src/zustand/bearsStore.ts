@@ -16,7 +16,7 @@ export interface GoodsItem {
     ProductPrice: string;
     ProductURL: string;
     UserUid: string | undefined;
-    ProductUid: string ;
+    ProductUid: string;
 }
 
 export interface ProductLike {
@@ -25,15 +25,23 @@ export interface ProductLike {
     userUid: string
 }
 
+export interface ProductPocket {
+    ProductName: string;
+    ProductUid: string;
+    ProductPrice: string | number
+}
+
 interface UserStore {
     user: User[];  // 여러 사용자를 배열로 저장
     goods: GoodsItem[];
     like: ProductLike[]
+    pocket: ProductPocket[]
     setUser: (userData: User) => void;
     setGoods: (goodsData: GoodsItem) => void;
     setLike: (likeData: ProductLike) => void
     updateGoods: (updatedGoods: GoodsItem) => void;
     updateUser: (updatedUser: User) => void;
+    setPocket: (pocketData: ProductPocket) => void
 }
 
 const useUserStore = create<UserStore>()(
@@ -42,6 +50,7 @@ const useUserStore = create<UserStore>()(
             user: [],
             goods: [],
             like: [],
+            pocket: [],
             setUser: (userData: User) => set((state) =>
                 ({ user: [...state.user, userData] })),
             setGoods: (goodsData: GoodsItem) => set((state) =>
@@ -58,6 +67,8 @@ const useUserStore = create<UserStore>()(
             })),
             setLike: (likeData: ProductLike) => set((state) =>
                 ({ like: [...state.like, likeData] })),
+            setPocket: (pocketData: ProductPocket) => set((state) =>
+                ({ pocket: [...state.pocket, pocketData] })),
         }),
         {
             name: 'user-storage',
