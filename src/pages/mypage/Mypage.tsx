@@ -5,7 +5,9 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button";
 import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import Collect from "./Collect";
+import BgChangButton from "@/components/ui/BgChangeButton";
+import ChangeMyPassword from "./ChangeMyPassword";
+import Like from "./Like"
 
 
 const Mypage = () => {
@@ -13,12 +15,16 @@ const Mypage = () => {
     const { user, updateUser } = useUserStore();
     const FoundUser = user.find(item => item.uid === userUid)
 
+
     const [changeUserName, setChangeUserName] = useState(`${FoundUser?.name}`)
     const [changeUserDate, setChangeUserDate] = useState(`${FoundUser?.date}`)
     const [changeUserNumber, setChangeUserNumber] = useState(`${FoundUser?.number}`)
     const [changeUserEmail, setChangeUserEmail] = useState(`${FoundUser?.email}`)
     const [changeUserSeller, setChangeUserSeller] = useState(`${FoundUser?.seller}`)
     const [changeUserUid, setChangeUserUid] = useState(`${FoundUser?.uid}`)
+    const [activeMenu, setActiveMenu] = useState('내 정보');
+
+    const menuItems = ['내 정보', '비밀번호 변경', '찜한항목', '장바구니'];
 
     const navigate = useNavigate()
 
@@ -50,41 +56,59 @@ const Mypage = () => {
         }
     };
 
+
     return (
         <>
             <Header />
             <div className="w-[60%] mx-auto pt-6">
                 <div className="flex">
-                    <Collect/>
+                    <div className="border-r border-black max-w-[150px] h-[600px]">
+                        <button
+                            className="text-2xl mb-[30px] ">마이페이지</button>
+                        {menuItems.map(item => (
+                            <BgChangButton
+                                key={item}
+                                title={item}
+                                activeMenu={activeMenu}
+                                setActiveMenu={setActiveMenu}
+                            />
+                        ))}
+                    </div>
                     <section>
-                        <h2 className="text-3xl mb-[30px] ml-[30px]">내 정보</h2>
-                        {FoundUser ? (
-                            <div>
-                                <h3 className="text-xl mb-[20px] ml-[30px]">이메일 : {FoundUser.email}</h3>
-                                <div className="text-xl mb-[20px] ml-[30px]">
-                                    <label htmlFor="user-name">이름 : </label>
-                                    <input type="text" id="user-name"
-                                        value={changeUserName} onChange={(e) => { setChangeUserName(e.target.value) }} />
-                                </div>
+                        {activeMenu === "내 정보" ?
+                            <>
+                                <h2 className="text-3xl mb-[30px] ml-[30px]">내 정보</h2>
+                                <div>
+                                    <h3 className="text-xl mb-[20px] ml-[30px]">이메일 : {FoundUser?.email}</h3>
+                                    <div className="text-xl mb-[20px] ml-[30px]">
+                                        <label htmlFor="user-name">이름 : </label>
+                                        <input type="text" id="user-name"
+                                            value={changeUserName} onChange={(e) => { setChangeUserName(e.target.value) }} />
+                                    </div>
 
-                                <div className="text-xl mb-[20px] ml-[30px]">
-                                    <label htmlFor="user-number">전화번호 : </label>
-                                    <input
-                                        type="text" id="user-number"
-                                        value={changeUserNumber} onChange={(e) => { setChangeUserNumber(e.target.value) }} />
-                                </div>
+                                    <div className="text-xl mb-[20px] ml-[30px]">
+                                        <label htmlFor="user-number">전화번호 : </label>
+                                        <input
+                                            type="text" id="user-number"
+                                            value={changeUserNumber} onChange={(e) => { setChangeUserNumber(e.target.value) }} />
+                                    </div>
 
-                                <div className="text-xl mb-[20px] ml-[30px]">
-                                    <label htmlFor="user-date">생년월일 : </label>
-                                    <input
-                                        type="text" id="user-date"
-                                        value={changeUserDate} onChange={(e) => { setChangeUserDate(e.target.value) }} />
+                                    <div className="text-xl mb-[20px] ml-[30px]">
+                                        <label htmlFor="user-date">생년월일 : </label>
+                                        <input
+                                            type="text" id="user-date"
+                                            value={changeUserDate} onChange={(e) => { setChangeUserDate(e.target.value) }} />
+                                    </div>
                                 </div>
-                            </div>
-                        ) : null}
-                        <div className="flex justify-end">
-                            <Button onClick={changeUserProfileButton}>수정하기</Button>
-                        </div>
+                                <div className="flex justify-end">
+                                    <Button onClick={changeUserProfileButton}>수정하기</Button>
+                                </div>
+                            </> :
+                            activeMenu === "비밀번호 변경" ?
+                                <ChangeMyPassword /> :
+                                activeMenu === "찜한항목" ?
+                                    <Like /> :
+                                    null}
                     </section>
                 </div>
             </div>
