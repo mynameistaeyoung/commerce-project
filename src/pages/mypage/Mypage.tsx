@@ -1,13 +1,14 @@
 import Header from "@/components/header/Header"
 import useUserStore from "@/zustand/bearsStore"
 import { auth, db } from "../../firebase"
-import { useState } from "react"
+import { act, useState } from "react"
 import { Button } from "@/components/ui/button";
 import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import BgChangButton from "@/components/ui/BgChangeButton";
 import ChangeMyPassword from "./ChangeMyPassword";
 import Like from "./Like"
+import Pocket from "./Pocket";
 
 
 const Mypage = () => {
@@ -108,7 +109,9 @@ const Mypage = () => {
                                 <ChangeMyPassword /> :
                                 activeMenu === "찜한항목" ?
                                     <Like /> :
-                                    null}
+                                    activeMenu === "장바구니" ?
+                                        <Pocket /> :
+                                        null}
                     </section>
                 </div>
             </div>
