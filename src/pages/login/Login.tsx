@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import useUserStore from "@/zustand/bearsStore";
+import { User } from "@/zustand/bearsStore";
 
 const Login = () => {
 
@@ -38,7 +39,8 @@ const Login = () => {
                 const docRef = doc(db, "user", uid)
                 const docSnap = await getDoc(docRef)
                 if (docSnap.exists()) {
-                    setUser(docSnap.data())
+                    const UserData = docSnap.data() as User
+                    setUser(UserData)
                 }
             }
             fetchData(userUid)
@@ -50,11 +52,10 @@ const Login = () => {
         }
     };
 
-
     return (
         <div className="w-[80%] min-h-screen flex justify-center items-center gap-10 max-w-screen-lg min-w-[1000px] mx-auto">
             <div className="flex-1">
-                <h1 className="text-3xl font-bold mb-8">패션앱에 오신 것을 환영합니다!</h1>
+                <h1 className="text-3xl font-bold mb-8 hover:cursor-pointer" onClick={()=>{navigate("/")}}>패션앱에 오신 것을 환영합니다!</h1>
             </div>
 
             <div className="w-full max-w-xl mx-auto flex-1">
