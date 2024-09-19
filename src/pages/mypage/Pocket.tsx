@@ -1,39 +1,47 @@
 import { useEffect, useState } from 'react'
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase"
 import useUserStore from "@/zustand/bearsStore";
 import { ProductPocket } from '@/zustand/bearsStore';
 import { useNavigate } from 'react-router-dom';
 
 const Pocket = () => {
-  const navigate = useNavigate()
-
-  const [myPocket, setMyPocket] = useState<ProductPocket[]>([])
+  const navigate = useNavigate();
+  const userUid = auth.currentUser?.uid;
+  const [myPocket, setMyPocket] = useState<ProductPocket[]>([]);
   const [matchedGoods, setMatchedGoods] = useState<any[]>([]);
-  const { setPocket, goods } = useUserStore();
+  const { goods } = useUserStore();
+
   useEffect(() => {
     const fetchPocketData = async () => {
-      try {
-        const pocketSnapshot = await getDocs(collection(db, "pocket"));
-        const pocketArr: ProductPocket[] = []
-        pocketSnapshot.forEach((doc) => {
-          const pocketData = doc.data() as ProductPocket
-          pocketArr.push(pocketData)
-        })
-        setMyPocket(pocketArr)
-      } catch (error) {
-        console.log("에러발생", error)
+      if (!userUid) {
+        console.error("유저가 없습니다.");
+        return;
       }
-    }
-    fetchPocketData()
-  }, [setPocket])
 
+      try {
+        const PocketRef = doc(db, "pocket", userUid);
+        const PocketSnap = await getDoc(PocketRef);
+        if (PocketSnap.exists()) {
+          console.log(PocketSnap.data());
+          console.log(PocketSnap.id)
+          const products = PocketSnap.data().Products || {};
+          setMyPocket(Object.values(products)); 
+        }
+      } catch (error) {
+        console.log("에러발생", error);
+      }
+    };
+    fetchPocketData();
+  }, [userUid]);
+
+  console.log(myPocket)
   useEffect(() => {
     const matched = goods.filter((item) =>
       myPocket.some((pocketItem) => pocketItem.ProductUid === item.ProductUid)
     );
     setMatchedGoods(matched);
-  }, [myPocket,goods])
+  }, [myPocket, goods]);
 
   return (
     <section>
@@ -52,7 +60,7 @@ const Pocket = () => {
         ))}
       </ul>
     </section>
-  )
-}
+  );
+};
 
-export default Pocket
+export default Pocket;
