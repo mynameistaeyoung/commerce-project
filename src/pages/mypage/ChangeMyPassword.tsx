@@ -57,7 +57,7 @@ const ChangeMyPassword = () => {
           onChange={(e) => setNewPassword(e.target.value)}
           className="border p-2 rounded-md w-full border-gray-300"
         />
-        <Button type="submit" className="mt-[10px]">
+        <Button type="submit" className="mt-[10px] bg-black">
           비밀번호 변경
         </Button>
       </form>
