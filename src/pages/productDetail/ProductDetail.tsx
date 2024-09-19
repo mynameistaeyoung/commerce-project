@@ -74,21 +74,42 @@ const ProductDetail = () => {
         }
     };
 
-    const onClickMyPockeyButton = async (e: any) => {
+    const onClickMtPocketButton = async (e: any) => {
         e.preventDefault();
-        const pocketRef = doc(db, "pocket", `${userUid}_${ProductUid}`);
+        if (!userUid || !FoundGoods) {
+            console.error("유저가 없거나 상품이 유효하지 않습니다.");
+            return;
+        }
+    
+        const pocketRef = doc(db, "pocket", userUid);
         try {
-            if (FoundGoods && FoundGoods.ProductName) {
-                await setDoc(pocketRef, {
+            const pocketDoc = await getDoc(pocketRef);
+            if (pocketDoc.exists()) {
+                const existingProducts = pocketDoc.data().Products || {};
+                existingProducts[FoundGoods.ProductUid] = {
                     ProductName: FoundGoods.ProductName,
-                    ProductUid: ProductUid,
-                    ProductPrice:FoundGoods.ProductPrice
+                    ProductPrice: FoundGoods.ProductPrice,
+                    ProductUid:FoundGoods.ProductUid,
+                    userUid: userUid,
+                };
+                await updateDoc(pocketRef, {
+                    Products: existingProducts,
                 });
-                console.log("포켓에 저장되었습니다.");
-                alert("장바구니 담기 완료!")
             } else {
-                console.error("FoundGoods 또는 FoundGoods.ProductName이 유효하지 않습니다.");
+                await setDoc(pocketRef, {
+                    Products: {
+                        [FoundGoods.ProductUid]: {
+                            ProductName: FoundGoods.ProductName,
+                            ProductPrice: FoundGoods.ProductPrice,
+                            ProductUid:FoundGoods.ProductUid,
+                            userUid: userUid,
+                        },
+                    },
+                });
             }
+    
+            console.log("포켓에 저장되었습니다.");
+            alert("장바구니 담기 완료!");
         } catch (error) {
             console.error("포켓에 저장 중 오류 발생:", error);
         }
@@ -119,7 +140,7 @@ const ProductDetail = () => {
                                     alt="찜하기 아이콘"
                                 />
                                 <Button className="mr-3">구매하기</Button>
-                                <Button onClick={onClickMyPockeyButton}>장바구니</Button>
+                                <Button onClick={onClickMtPocketButton}>장바구니</Button>
                             </div>
                         </div>
                     </div>
