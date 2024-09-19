@@ -7,7 +7,7 @@ export interface User {
     name: string;
     number: string;
     uid: string;
-    seller: boolean | string;
+    seller: boolean 
 }
 
 export interface GoodsItem {
@@ -32,16 +32,16 @@ export interface ProductPocket {
 }
 
 interface UserStore {
-    user: User[];  // 여러 사용자를 배열로 저장
+    user: User[]; 
     goods: GoodsItem[];
-    like: ProductLike[]
-    pocket: ProductPocket[]
+    like: ProductLike[];
+    search: GoodsItem[];
     setUser: (userData: User) => void;
     setGoods: (goodsData: GoodsItem) => void;
-    setLike: (likeData: ProductLike) => void
+    setLike: (likeData: ProductLike) => void;
     updateGoods: (updatedGoods: GoodsItem) => void;
     updateUser: (updatedUser: User) => void;
-    setPocket: (pocketData: ProductPocket) => void
+    setSearch: (searchData: GoodsItem[]) => void; 
 }
 
 const useUserStore = create<UserStore>()(
@@ -50,7 +50,7 @@ const useUserStore = create<UserStore>()(
             user: [],
             goods: [],
             like: [],
-            pocket: [],
+            search: [],
             setUser: (userData: User) => set((state) =>
                 ({ user: [...state.user, userData] })),
             setGoods: (goodsData: GoodsItem) => set((state) =>
@@ -67,8 +67,8 @@ const useUserStore = create<UserStore>()(
             })),
             setLike: (likeData: ProductLike) => set((state) =>
                 ({ like: [...state.like, likeData] })),
-            setPocket: (pocketData: ProductPocket) => set((state) =>
-                ({ pocket: [...state.pocket, pocketData] })),
+            setSearch: (searchData: GoodsItem[]) => set(() =>
+                ({ search: searchData })),
         }),
         {
             name: 'user-storage',
