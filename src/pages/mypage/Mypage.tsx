@@ -1,14 +1,15 @@
 import Header from "@/components/header/Header"
 import useUserStore from "@/zustand/bearsStore"
 import { auth, db } from "../../firebase"
-import { act, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button";
 import { doc, updateDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import BgChangButton from "@/components/ui/BgChangeButton";
 import ChangeMyPassword from "./ChangeMyPassword";
-import Like from "./Like"
+import UserLike from "./UserLike"
 import Pocket from "./Pocket";
+import { useEffect } from "react";
 
 
 const Mypage = () => {
@@ -57,6 +58,12 @@ const Mypage = () => {
         }
     };
 
+    const location = useLocation();
+    useEffect(() => {
+        if (location.state?.activeMenu) {
+            setActiveMenu(location.state.activeMenu);
+        }
+    }, [location.state]);
 
     return (
         <>
@@ -75,7 +82,7 @@ const Mypage = () => {
                             />
                         ))}
                     </div>
-                    <section>
+                    <section className="w-full">
                         {activeMenu === "내 정보" ?
                             <>
                                 <h2 className="text-3xl mb-[30px] ml-[30px]">내 정보</h2>
@@ -108,7 +115,7 @@ const Mypage = () => {
                             activeMenu === "비밀번호 변경" ?
                                 <ChangeMyPassword /> :
                                 activeMenu === "찜한항목" ?
-                                    <Like /> :
+                                    <UserLike /> :
                                     activeMenu === "장바구니" ?
                                         <Pocket /> :
                                         null}
