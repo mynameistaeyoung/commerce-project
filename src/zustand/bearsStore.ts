@@ -13,10 +13,11 @@ export interface User {
 export interface GoodsItem {
     ProductDescription: string;
     ProductName: string;
-    ProductPrice: string;
+    ProductPrice: string |undefined;
     ProductURL: string;
     UserUid: string | undefined;
     ProductUid: string;
+    ProductQuantity:number;
 }
 
 export interface ProductLike {
@@ -29,6 +30,8 @@ export interface ProductPocket {
     ProductName: string;
     ProductUid: string;
     ProductPrice: string | number
+    ProductQuantity:number
+    userUid:string
 }
 
 interface UserStore {
