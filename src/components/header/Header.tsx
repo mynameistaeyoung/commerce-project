@@ -53,7 +53,7 @@ const Header = () => {
     };
 
     return (
-        <div className="w-[60%] mx-auto">
+        <header className="w-[60%] mx-auto">
             <div className="flex justify-end">
                 {FoundUser[0]?.seller === true ?
                     <div className="flex">
@@ -65,7 +65,10 @@ const Header = () => {
                 <button onClick={privateMypage} className="mr-2">마이페이지</button>
                 <div>|</div>
                 &nbsp;
-                <button className="mr-2">장바구니</button>
+                <button 
+                className="mr-2"
+                onClick={()=>{navigate('/mypage', { state: { activeMenu: '장바구니' } })}}
+                >장바구니</button>
                 <div>|</div>
                 &nbsp;
                 <button onClick={logOut} className="mr-2">{FoundUser.length > 0 ? "로그아웃" : "로그인"}</button>
@@ -87,7 +90,7 @@ const Header = () => {
                     </button>
                 </div>
             </div>
-        </div>
+        </header>
     );
 };
 
