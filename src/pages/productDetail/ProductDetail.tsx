@@ -7,6 +7,7 @@ import { doc, deleteDoc, setDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db, storage, auth } from "../../firebase";
 import { deleteObject, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
+import Like from "@/components/like/Like";
 
 const ProductDetail = () => {
     const { goods } = useUserStore();
@@ -15,22 +16,8 @@ const ProductDetail = () => {
     const userUid = auth.currentUser?.uid;
     const navigate = useNavigate();
 
-    const [clicked, setClicked] = useState(false);
-
-    useEffect(() => {
-        const checkLikeStatus = async () => {
-            if (userUid && ProductUid) {
-                const likeRef = doc(db, "likes", `${userUid}_${ProductUid}`);
-                const likeDoc = await getDoc(likeRef);
-                if (likeDoc.exists()) {
-                    setClicked(likeDoc.data().like);
-                }
-            }
-        };
-
-        checkLikeStatus();
-    }, [userUid, ProductUid]);
-
+    const [quantity, setQuantity] = useState(1);
+    const [productAllPrice, setProductAllPrice] = useState(FoundGoods?.ProductPrice)
 
     const ProductDeleteButton = async (e: any) => {
         e.preventDefault();
@@ -48,39 +35,16 @@ const ProductDetail = () => {
         }
     };
 
-    const onClickLikeButton = async (e: any) => {
-        e.preventDefault();
-        if (!userUid || !ProductUid) {
-            alert("로그인이 필요합니다.");
-            return;
-        }
-        const likeRef = doc(db, "likes", `${userUid}_${ProductUid}`);
-        try {
-            const likeDoc = await getDoc(likeRef);
-            if (likeDoc.exists()) {
-                await updateDoc(likeRef, {
-                    like: !clicked,
-                });
-            } else {
-                await setDoc(likeRef, {
-                    userUid,
-                    ProductUid,
-                    like: true,
-                });
-            }
-            setClicked(!clicked);
-        } catch (error) {
-            console.log("좋아요 처리 중 오류 발생:", error);
-        }
-    };
-
     const onClickMtPocketButton = async (e: any) => {
         e.preventDefault();
         if (!userUid || !FoundGoods) {
             console.error("유저가 없거나 상품이 유효하지 않습니다.");
             return;
         }
-    
+        if (quantity > FoundGoods.ProductQuantity) {
+            alert(`현재 재고(${FoundGoods.ProductQuantity}개)보다 많은 수량을 담을 수 없습니다.`);
+            return;
+        }
         const pocketRef = doc(db, "pocket", userUid);
         try {
             const pocketDoc = await getDoc(pocketRef);
@@ -88,8 +52,9 @@ const ProductDetail = () => {
                 const existingProducts = pocketDoc.data().Products || {};
                 existingProducts[FoundGoods.ProductUid] = {
                     ProductName: FoundGoods.ProductName,
-                    ProductPrice: FoundGoods.ProductPrice,
-                    ProductUid:FoundGoods.ProductUid,
+                    ProductPrice: productAllPrice,
+                    ProductUid: FoundGoods.ProductUid,
+                    ProductQuantity: quantity,
                     userUid: userUid,
                 };
                 await updateDoc(pocketRef, {
@@ -100,20 +65,26 @@ const ProductDetail = () => {
                     Products: {
                         [FoundGoods.ProductUid]: {
                             ProductName: FoundGoods.ProductName,
-                            ProductPrice: FoundGoods.ProductPrice,
-                            ProductUid:FoundGoods.ProductUid,
+                            ProductPrice: productAllPrice,
+                            ProductUid: FoundGoods.ProductUid,
+                            ProductQuantity: quantity,
                             userUid: userUid,
                         },
                     },
                 });
             }
-    
             console.log("포켓에 저장되었습니다.");
             alert("장바구니 담기 완료!");
         } catch (error) {
             console.error("포켓에 저장 중 오류 발생:", error);
         }
     };
+
+    useEffect(() => {
+        FoundGoods ?
+            setProductAllPrice(quantity * +(FoundGoods?.ProductPrice)) :
+            null
+    }, [quantity])
 
     return (
         <>
@@ -123,9 +94,17 @@ const ProductDetail = () => {
                     <div className="flex">
                         <img src={FoundGoods.ProductURL} className="aspect-1/1 w-[60%] mr-4" alt={FoundGoods.ProductName} />
                         <div className="mt-[60px]">
-                            <div className="font-bold text-3xl mb-10">{FoundGoods.ProductName}</div>
-                            <div className="font-bold text-3xl">{FoundGoods.ProductPrice}원</div>
-                            <div className="font-bold text-3xl mb-10">{FoundGoods.ProductDescription}</div>
+                            <div className="flex">
+                                <div className="font-bold text-3xl mb-10">{FoundGoods.ProductName}</div>
+                                <Like ProductUid={ProductUid} />
+                            </div>
+                            <div className="mb-10">
+                                <div className="font-bold text-3xl">{productAllPrice}원</div>
+                                <div className="font-bold text-3xl">{FoundGoods.ProductDescription}</div>
+                                {FoundGoods.ProductQuantity < 10 ?
+                                    <div className="text-red-500">현재 남은 수량:{FoundGoods.ProductQuantity}개</div>
+                                    : null}
+                            </div>
                             {FoundGoods.UserUid === userUid ? (
                                 <div className="mb-3">
                                     <Button className="mr-3" onClick={() => navigate(`/retouchProduct/${ProductUid}`)}>수정하기</Button>
@@ -133,12 +112,27 @@ const ProductDetail = () => {
                                 </div>
                             ) : null}
                             <div className="flex">
-                                <img
-                                    src={clicked ? "/free-icon-hearts-138533.png" : "/free-icon-heart-1077035.png"}
-                                    className="aspect-1/1 w-[40px] mr-3"
-                                    onClick={onClickLikeButton}
-                                    alt="찜하기 아이콘"
-                                />
+                                <div className="flex items-center border border-black mr-3">
+                                    <input
+                                        type="number"
+                                        value={quantity}
+                                        className="w-[60px] text-center border-black"
+                                    />
+                                    <div>
+                                        <button
+                                            className="px-2 bg-gray-200 hover:bg-gray-300"
+                                            onClick={() => { setQuantity(prev => prev + 1) }}
+                                        >
+                                            +1
+                                        </button>
+                                        <button
+                                            className="px-[10px] bg-gray-200 hover:bg-gray-300"
+                                            onClick={() => { setQuantity(prev => prev - 1) }}
+                                        >
+                                            -1
+                                        </button>
+                                    </div>
+                                </div>
                                 <Button className="mr-3">구매하기</Button>
                                 <Button onClick={onClickMtPocketButton}>장바구니</Button>
                             </div>
