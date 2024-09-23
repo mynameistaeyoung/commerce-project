@@ -15,7 +15,7 @@ import { useEffect } from "react";
 const Mypage = () => {
     const userUid = auth.currentUser?.uid
     const { user, updateUser } = useUserStore();
-    const FoundUser = user.find(item => item.uid === userUid)
+    const FoundUser = user.length > 0 ? user[0] : null;
 
 
     const [changeUserName, setChangeUserName] = useState(`${FoundUser?.name}`)
