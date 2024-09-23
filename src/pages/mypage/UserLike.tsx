@@ -7,10 +7,10 @@ import { useNavigate } from "react-router-dom";
 import Like from "@/components/like/Like";
 
 const UserLike = () => {
-  const { setLike, goods } = useUserStore();
+  const { setLike, goods,user } = useUserStore();
   const [productLike, setProductLike] = useState<ProductLike[]>([]);
   const [filteredGoods, setFilteredGoods] = useState<any[]>([]);
-  const userUid = auth.currentUser?.uid;
+  const userUid = user.length > 0 ? user[0].uid : null;
   const navigate = useNavigate();
 
   useEffect(() => {
