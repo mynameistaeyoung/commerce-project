@@ -10,10 +10,10 @@ import { useEffect, useState } from "react";
 import Like from "@/components/like/Like";
 
 const ProductDetail = () => {
-    const { goods } = useUserStore();
+    const { goods,user } = useUserStore();
     const { ProductUid } = useParams();
     const FoundGoods = goods.find(item => item.ProductUid === ProductUid);
-    const userUid = auth.currentUser?.uid;
+    const userUid = user.length > 0 ? user[0].uid : null;
     const navigate = useNavigate();
 
     const [quantity, setQuantity] = useState(1);
