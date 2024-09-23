@@ -7,17 +7,17 @@ export interface User {
     name: string;
     number: string;
     uid: string;
-    seller: boolean 
+    seller: boolean
 }
 
 export interface GoodsItem {
     ProductDescription: string;
     ProductName: string;
-    ProductPrice: string |undefined;
+    ProductPrice: string | undefined;
     ProductURL: string;
     UserUid: string | undefined;
     ProductUid: string;
-    ProductQuantity:number;
+    ProductQuantity: number;
 }
 
 export interface ProductLike {
@@ -30,21 +30,22 @@ export interface ProductPocket {
     ProductName: string;
     ProductUid: string;
     ProductPrice: string | number
-    ProductQuantity:number
-    userUid:string
+    ProductQuantity: number
+    userUid: string
 }
 
 interface UserStore {
-    user: User[]; 
+    user: User[];
     goods: GoodsItem[];
     like: ProductLike[];
     search: GoodsItem[];
     setUser: (userData: User) => void;
     setGoods: (goodsData: GoodsItem) => void;
     setLike: (likeData: ProductLike) => void;
+    clearUser: () => void,
     updateGoods: (updatedGoods: GoodsItem) => void;
     updateUser: (updatedUser: User) => void;
-    setSearch: (searchData: GoodsItem[]) => void; 
+    setSearch: (searchData: GoodsItem[]) => void;
 }
 
 const useUserStore = create<UserStore>()(
@@ -54,8 +55,8 @@ const useUserStore = create<UserStore>()(
             goods: [],
             like: [],
             search: [],
-            setUser: (userData: User) => set((state) =>
-                ({ user: [...state.user, userData] })),
+            setUser: (userData: User) => set(() =>
+                ({ user: [userData] })),
             setGoods: (goodsData: GoodsItem) => set((state) =>
                 ({ goods: [...state.goods, goodsData] })),
             updateGoods: (updatedGoods: GoodsItem) => set((state) => ({
@@ -63,6 +64,7 @@ const useUserStore = create<UserStore>()(
                     item.ProductUid === updatedGoods.ProductUid ? updatedGoods : item
                 ),
             })),
+            clearUser: () => set(() => ({ user: [] })),
             updateUser: (updatedUser: User) => set((state) => ({
                 user: state.user.map((item) =>
                     item.uid === updatedUser.uid ? updatedUser : item
