@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db, auth } from "../../firebase";
+import { db } from "../../firebase";
 import useUserStore from "@/zustand/bearsStore";
 import { ProductPocket } from '@/zustand/bearsStore';
 import { useNavigate } from 'react-router-dom';
 
 const Pocket = () => {
   const navigate = useNavigate();
-  const userUid = auth.currentUser?.uid;
   const [myPocket, setMyPocket] = useState<ProductPocket[]>([]);
   const [matchedGoods, setMatchedGoods] = useState<any[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
-  const { goods } = useUserStore();
+  const { goods,user } = useUserStore();
+  const userUid = user.length > 0 ? user[0].uid : null;
 
   useEffect(() => {
     const fetchPocketData = async () => {
