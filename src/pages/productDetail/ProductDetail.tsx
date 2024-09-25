@@ -4,13 +4,13 @@ import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { doc, deleteDoc, setDoc, updateDoc, getDoc } from "firebase/firestore";
-import { db, storage, auth } from "../../firebase";
+import { db, storage } from "../../firebase";
 import { deleteObject, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import Like from "@/components/like/Like";
 
 const ProductDetail = () => {
-    const { goods,user } = useUserStore();
+    const { goods, user } = useUserStore();
     const { ProductUid } = useParams();
     const FoundGoods = goods.find(item => item.ProductUid === ProductUid);
     const userUid = user.length > 0 ? user[0].uid : null;
@@ -126,7 +126,7 @@ const ProductDetail = () => {
                                             +1
                                         </button>
                                         <button
-                                            className="px-[10px] bg-gray-200 hover:bg-gray-300"
+                                            className={`${quantity === 1 ? "px-[10px] bg-gray-200 pointer-events-none text-gray-400" : "px-[10px] bg-gray-200 hover:bg-gray-300"}`}
                                             onClick={() => { setQuantity(prev => prev - 1) }}
                                         >
                                             -1
