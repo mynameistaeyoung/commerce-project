@@ -1,16 +1,19 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import useUserStore from "@/zustand/bearsStore";
+import useUserStore from "@/zustand/bearsStore"; 
 import { ProductPocket } from '@/zustand/bearsStore';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const Pocket = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const [myPocket, setMyPocket] = useState<ProductPocket[]>([]);
   const [matchedGoods, setMatchedGoods] = useState<any[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
-  const { goods,user } = useUserStore();
+  const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: boolean }>({});
+  const [totalPrice, setTotalPrice] = useState(0); // 총 가격 상태 추가
+  const { goods, user, setSelectedItems, selectedItems } = useUserStore();  
   const userUid = user.length > 0 ? user[0].uid : null;
 
   useEffect(() => {
@@ -45,6 +48,20 @@ const Pocket = () => {
     );
     setMatchedGoods(matched);
   }, [myPocket, goods]);
+
+  useEffect(() => {
+    const calculateTotalPrice = () => {
+      const total = matchedGoods.reduce((acc, item) => {
+        if (selectedProducts[item.ProductUid]) {
+          return acc + (item.ProductPrice * (quantities[item.ProductUid] || 1));
+        }
+        return acc;
+      }, 0);
+      setTotalPrice(total);
+    };
+
+    calculateTotalPrice();
+  }, [selectedProducts, quantities, matchedGoods]);
 
   const onClickDeletePocketButton = async (productUid: string) => {
     const pocketRef = doc(db, "pocket", userUid!);
@@ -83,13 +100,32 @@ const Pocket = () => {
 
   const handleQuantityChange = (productUid: string, delta: number, price: number) => {
     setQuantities((prevQuantities) => {
-      const newQuantity = Math.max(1, (prevQuantities[productUid] || 1) + delta); 
+      const newQuantity = Math.max(1, (prevQuantities[productUid] || 1) + delta);
       updateQuantityAndPriceInDb(productUid, newQuantity, price);
       return {
         ...prevQuantities,
         [productUid]: newQuantity,
       };
     });
+  };
+
+  const onChangeSelectProduct = (productUid: string) => {
+    setSelectedProducts((prevSelected) => ({
+      ...prevSelected,
+      [productUid]: !prevSelected[productUid],
+    }));
+  };
+
+  const handlePurchaseClick = () => {
+    const selectedItems = matchedGoods
+      .filter(item => selectedProducts[item.ProductUid])
+      .map(item => ({
+        ...item,  
+        ProductQuantity: quantities[item.ProductUid]  
+      }));
+      
+    setSelectedItems(selectedItems);
+    navigate("/payment");
   };
 
   return (
@@ -100,16 +136,23 @@ const Pocket = () => {
           <div
             key={item.ProductUid}
             className='flex justify-between items-center mb-4'>
-            <li
-              className="font-bold cursor-pointer flex items-center"
-              onClick={() => { navigate(`/productDetail/${item.ProductUid}`); }}
-            >
-              <img src={item.ProductURL} className="w-[100px] h-[100px] mr-4" alt={item.ProductName} />
-              <div className="flex-1">
-                <p className="text-lg">{item.ProductName}</p>
-                <p className="text-md">{item.ProductPrice* (quantities[item.ProductUid] || 1)}원</p>
-              </div>
-            </li>
+            <div className='flex gap-3'>
+              <input 
+                type="checkbox" 
+                checked={selectedProducts[item.ProductUid] || false}
+                onChange={() => onChangeSelectProduct(item.ProductUid)}
+              />
+              <li
+                className="font-bold cursor-pointer flex items-center"
+                onClick={() => { navigate(`/productDetail/${item.ProductUid}`); }}
+              >
+                <img src={item.ProductURL} className="w-[100px] h-[100px] mr-4" alt={item.ProductName} />
+                <div className="flex-1">
+                  <p className="text-lg">{item.ProductName}</p>
+                  <p className="text-md">{item.ProductPrice * (quantities[item.ProductUid] || 1)}원</p>
+                </div>
+              </li>
+            </div>
             <div className='flex gap-3'>
               <div>
                 <button
@@ -126,7 +169,7 @@ const Pocket = () => {
                 />
                 <button
                   className="px-[10px] bg-gray-200 hover:bg-gray-300"
-                  onClick={() => handleQuantityChange(item.ProductUid, 1, item.ProductPrice)} 
+                  onClick={() => handleQuantityChange(item.ProductUid, 1, item.ProductPrice)}
                 >
                   +1
                 </button>
@@ -140,7 +183,15 @@ const Pocket = () => {
             </div>
           </div>
         ))}
-      </ul>    </section>
+      </ul>
+      <div className="flex justify-between mt-[30px]">
+        <strong className='ml-[30px] text-2xl'>총 {totalPrice}원</strong> 
+        <Button
+          className='w-[200px]'
+          onClick={handlePurchaseClick}  
+        >구매하기</Button>
+      </div>
+    </section>
   );
 };
 
