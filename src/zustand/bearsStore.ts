@@ -32,6 +32,7 @@ export interface ProductPocket {
     ProductPrice: string | number
     ProductQuantity: number
     userUid: string
+    ProductURL:string
 }
 
 interface UserStore {
@@ -39,6 +40,7 @@ interface UserStore {
     goods: GoodsItem[];
     like: ProductLike[];
     search: GoodsItem[];
+    selectedItems: ProductPocket[];
     setUser: (userData: User) => void;
     setGoods: (goodsData: GoodsItem) => void;
     setLike: (likeData: ProductLike) => void;
@@ -46,6 +48,7 @@ interface UserStore {
     updateGoods: (updatedGoods: GoodsItem) => void;
     updateUser: (updatedUser: User) => void;
     setSearch: (searchData: GoodsItem[]) => void;
+    setSelectedItems:(items: ProductPocket[])=>void
 }
 
 const useUserStore = create<UserStore>()(
@@ -55,6 +58,7 @@ const useUserStore = create<UserStore>()(
             goods: [],
             like: [],
             search: [],
+            selectedItems: [],
             setUser: (userData: User) => set(() =>
                 ({ user: [userData] })),
             setGoods: (goodsData: GoodsItem) => set((state) =>
@@ -74,6 +78,7 @@ const useUserStore = create<UserStore>()(
                 ({ like: [...state.like, likeData] })),
             setSearch: (searchData: GoodsItem[]) => set(() =>
                 ({ search: searchData })),
+            setSelectedItems: (items) => set(() => ({ selectedItems: items })),
         }),
         {
             name: 'user-storage',
