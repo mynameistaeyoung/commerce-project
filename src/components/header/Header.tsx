@@ -53,7 +53,7 @@ const Header = () => {
         navigate("/");
     };
 
-    console.log(FoundUser)
+
 
     return (
         <header className="w-[60%] mx-auto">
