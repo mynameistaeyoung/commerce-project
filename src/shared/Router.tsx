@@ -7,7 +7,6 @@ import Registration from "@/pages/registration/Registration"
 import ProductDetail from "@/pages/productDetail/ProductDetail"
 import RetouchProduct from "@/pages/retouchProduct/RetouchProduct"
 import Payment from "@/pages/payment/Payment"
-import KakaoMap from "@/components/map/KakaoMap"
 
 
 const Router = () => {
@@ -22,7 +21,6 @@ const Router = () => {
         <Route path="/productDetail/:ProductUid" element={<ProductDetail />} />
         <Route path="/retouchProduct/:ProductUid" element={<RetouchProduct />} />
         <Route path="/payment" element={<Payment />} />
-        <Route path="/kakaoMap" element={<KakaoMap />} />
       </Routes>
     </BrowserRouter>
   )
