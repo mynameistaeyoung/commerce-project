@@ -8,6 +8,7 @@ export interface User {
     number: string;
     uid: string;
     seller: boolean
+    address:any
 }
 
 export interface GoodsItem {
