@@ -1,9 +1,14 @@
 import Header from "@/components/header/Header";
 import useUserStore from "@/zustand/bearsStore";
+import KakaoMap from "@/components/map/KakaoMap";
+import { useState } from "react";
+
 
 const Payment = () => {
     const { user, selectedItems } = useUserStore();
     const FoundUser = user.length > 0 ? user[0] : null;
+
+    const [address, setAddress] = useState<string>(FoundUser?.address || "");
 
     const totalProductPrice = selectedItems.reduce((total, item) => {
         return total + (item.ProductPrice as number) * item.ProductQuantity;
@@ -11,6 +16,8 @@ const Payment = () => {
 
     const shippingFee = 3000;
     const totalPrice = totalProductPrice + shippingFee;
+
+
 
     return (
         <>
@@ -21,10 +28,11 @@ const Payment = () => {
                     <div className="space-y-8">
                         <div className="address-section">
                             <h2 className="text-xl font-semibold mb-4">배송지 정보</h2>
-                            <div className="bg-gray-100 p-4 rounded-lg">
+                            <div className="bg-gray-100 p-4 rounded-lg mb-3">
                                 <p className="mb-2"><strong>이름:</strong> {FoundUser?.name}</p>
-                                <p className="mb-2"><strong>주소:</strong> 대구시 어딘가..</p> 
+                                <p className="mb-2"><strong>주소:</strong> {address}</p>
                             </div>
+                            <KakaoMap fullAddress={address} setFullAddress={setAddress} userUid={FoundUser?.uid}/>
                         </div>
 
                         {/* 주문 상품 */}
