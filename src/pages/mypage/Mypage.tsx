@@ -24,7 +24,6 @@ const Mypage = () => {
     const [changeUserEmail, setChangeUserEmail] = useState(`${FoundUser?.email}`)
     const [changeUserSeller, setChangeUserSeller] = useState(`${FoundUser?.seller}`)
     const [changeUserUid, setChangeUserUid] = useState(`${FoundUser?.uid}`)
-    const [address,setAddress]=useState(`${FoundUser?.address}`)
     const [activeMenu, setActiveMenu] = useState('내 정보');
 
     const menuItems = ['내 정보', '비밀번호 변경', '찜한항목', '장바구니'];
