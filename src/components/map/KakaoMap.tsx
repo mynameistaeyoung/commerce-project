@@ -1,61 +1,79 @@
-import { useState, useEffect } from "react";
+import { useState } from 'react';
+import DaumPostCode from 'react-daum-postcode';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
+const KakaoMap = ({ fullAddress, setFullAddress, userUid }: any) => {
+  const [isPostCodeVisible, setIsPostCodeVisible] = useState<boolean>(false);
 
-const KakaoMap = () => {
-  const [map, setMap] = useState<any>();
-  const [marker, setMarker] = useState<any>();
+  const handleComplete = async (data: any) => {
+    let address = data.address;
+    let extraAddress = '';
 
-  useEffect(() => {
-    window.kakao.maps.load(() => {
-      const container = document.getElementById("map");
-      const options = {
-        center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-        level: 3,
-      };
+    const { addressType, bname, buildingName } = data;
+    if (addressType === 'R') {
+      if (bname !== '') {
+        extraAddress += bname;
+      }
+      if (buildingName !== '') {
+        extraAddress += `${extraAddress !== '' ? ', ' : ''}${buildingName}`;
+      }
+      address += `${extraAddress !== '' ? ` (${extraAddress})` : ''}`;
+    }
 
-      const kakaoMap = new window.kakao.maps.Map(container, options);
-      setMap(kakaoMap);
-      
-      const getCurrentPosition = () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const lat = position.coords.latitude;
-              const lng = position.coords.longitude;
+    setFullAddress(address);
+    setIsPostCodeVisible(false);
 
-              const currentPos = new window.kakao.maps.LatLng(lat, lng);
-              kakaoMap.setCenter(currentPos);
-
-              const currentMarker = new window.kakao.maps.Marker({
-                position: currentPos,
-              });
-              currentMarker.setMap(kakaoMap);
-              setMarker(currentMarker);
-            },
-            (error) => {
-              console.error("Error getting location: ", error);
-            }
-          );
-        } else {
-          console.error("Geolocation is not supported by this browser.");
-        }
-      };
-
-      getCurrentPosition();
-    });
-  }, []);
+    try {
+      const addressRef = doc(db, "user", userUid);
+      await updateDoc(addressRef, {
+        address: address,
+      });
+      console.log("주소가 업데이트되었습니다.");
+    } catch (error) {
+      console.error("주소 업데이트 실패:", error);
+    }
+  };
 
   return (
-    <div
-      id="map"
-      className="w-[100%] h-[500px]">
+    <div>
+      <div className="mb-8">
+        <Label
+          htmlFor="user_address"
+          className='flex justify-between'
+        >
+          주소
+          {fullAddress ? (
+            <p
+              onClick={() => setIsPostCodeVisible(true)}>
+              주소 변경
+            </p>
+          ) : (
+            <p onClick={() => setIsPostCodeVisible(true)} >
+              주소 검색
+            </p>
+          )}
+        </Label>
+        <Input
+          id="user_address"
+          type="text"
+          value={fullAddress}
+          readOnly
+        />
+
+        {isPostCodeVisible && (
+          <DaumPostCode
+            onComplete={handleComplete}
+            className="post-code"
+            autoClose={false}
+          />
+        )}
+      </div>
     </div>
   );
 };
 
 export default KakaoMap;
+
