@@ -8,6 +8,7 @@ import { auth, db } from "@/firebase";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import useUserStore from "@/zustand/bearsStore";
+import KakaoMap from "@/components/map/KakaoMap";
 
 
 const Register = () => {
@@ -22,6 +23,7 @@ const Register = () => {
   const [date, setDate] = useState("")
   const [number, setNumber] = useState("")
   const [seller, setSeller] = useState(false)
+  const [fullAddress, setFullAddress] = useState("");
 
   const onChange = (event: any) => {
     const {
@@ -56,6 +58,7 @@ const Register = () => {
         number: number,
         uid: user.uid,
         seller: seller,
+        address: fullAddress
       });
       setUser({
         date: date,
@@ -64,6 +67,7 @@ const Register = () => {
         number: number,
         uid: user.uid,
         seller: seller,
+        address: fullAddress
       })
       console.log("Document written with ID: ");
       navigate("/login");
@@ -147,8 +151,8 @@ const Register = () => {
         </div>
 
         {/* 전화번호 */}
-        <div className="mb-8">
-          <Label htmlFor="user_number">
+        <div className="mb-4">
+          <Label htmlFor="user_create_number">
             전화번호
           </Label>
           <Input
@@ -159,6 +163,10 @@ const Register = () => {
             onChange={onChange}
           />
         </div>
+        <KakaoMap
+          fullAddress={fullAddress}
+          setFullAddress={setFullAddress}
+        />
         <div>
           <Checkbox
             id="seller"
