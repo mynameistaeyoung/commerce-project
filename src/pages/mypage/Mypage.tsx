@@ -24,6 +24,7 @@ const Mypage = () => {
     const [changeUserEmail, setChangeUserEmail] = useState(`${FoundUser?.email}`)
     const [changeUserSeller, setChangeUserSeller] = useState(`${FoundUser?.seller}`)
     const [changeUserUid, setChangeUserUid] = useState(`${FoundUser?.uid}`)
+    const [address,setAddress]=useState(`${FoundUser?.address}`)
     const [activeMenu, setActiveMenu] = useState('내 정보');
 
     const menuItems = ['내 정보', '비밀번호 변경', '찜한항목', '장바구니'];
@@ -49,7 +50,8 @@ const Mypage = () => {
                 number: changeUserNumber,
                 uid: changeUserUid,
                 seller: Boolean(changeUserSeller),
-                email: changeUserEmail
+                email: changeUserEmail,
+                address:null
             })
             alert("유저정보가 변경되었습니다.")
             navigate("/mypage")
@@ -107,6 +109,7 @@ const Mypage = () => {
                                             type="text" id="user-date"
                                             value={changeUserDate} onChange={(e) => { setChangeUserDate(e.target.value) }} />
                                     </div>
+                                    <h3 className="text-xl mb-[20px] ml-[30px]">주소 : {FoundUser?.address}</h3>
                                 </div>
                                 <div className="flex justify-end">
                                     <Button onClick={changeUserProfileButton}>수정하기</Button>
