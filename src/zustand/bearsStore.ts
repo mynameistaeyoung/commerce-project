@@ -6,9 +6,9 @@ export interface User {
     email: string;
     name: string;
     number: string;
-    uid: string;
+    uid: string | undefined;
     seller: boolean
-    address:any
+    addresses: any
 }
 
 export interface GoodsItem {
@@ -33,7 +33,7 @@ export interface ProductPocket {
     ProductPrice: string | number
     ProductQuantity: number
     userUid: string
-    ProductURL:string
+    ProductURL: string
 }
 
 interface UserStore {
@@ -49,7 +49,7 @@ interface UserStore {
     updateGoods: (updatedGoods: GoodsItem) => void;
     updateUser: (updatedUser: User) => void;
     setSearch: (searchData: GoodsItem[]) => void;
-    setSelectedItems:(items: ProductPocket[])=>void
+    setSelectedItems: (items: ProductPocket[]) => void
 }
 
 const useUserStore = create<UserStore>()(
