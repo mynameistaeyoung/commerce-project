@@ -58,7 +58,7 @@ const Register = () => {
         number: number,
         uid: user.uid,
         seller: seller,
-        address: fullAddress
+        addresses: [fullAddress]
       });
       setUser({
         date: date,
@@ -67,7 +67,7 @@ const Register = () => {
         number: number,
         uid: user.uid,
         seller: seller,
-        address: fullAddress
+        addresses: [fullAddress]
       })
       console.log("Document written with ID: ");
       navigate("/login");
