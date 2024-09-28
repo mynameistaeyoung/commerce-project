@@ -38,6 +38,7 @@ const ProductDetail = () => {
     const onClickMtPocketButton = async (e: any) => {
         e.preventDefault();
         if (!userUid || !FoundGoods) {
+            alert("로그인이 필요한 서비스입니다")
             console.error("유저가 없거나 상품이 유효하지 않습니다.");
             return;
         }
