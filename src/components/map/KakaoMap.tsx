@@ -1,79 +1,58 @@
-import { useState } from 'react';
-import DaumPostCode from 'react-daum-postcode';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import React from 'react';
+import { useDaumPostcodePopup } from 'react-daum-postcode';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+interface PostcodeProps {
+  userUid?: string;
+  setFullAddress: (address: string) => void;
+  fullAddress: string;
+}
 
-const KakaoMap = ({ fullAddress, setFullAddress, userUid }: any) => {
-  const [isPostCodeVisible, setIsPostCodeVisible] = useState<boolean>(false);
+const Postcode: React.FC<PostcodeProps> = ({
+  userUid,
+  fullAddress,
+  setFullAddress,
+}) => {
+  const scriptUrl =
+    'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  const open = useDaumPostcodePopup(scriptUrl);
 
   const handleComplete = async (data: any) => {
-    let address = data.address;
+    let newAddress = data.address;
     let extraAddress = '';
 
-    const { addressType, bname, buildingName } = data;
-    if (addressType === 'R') {
-      if (bname !== '') {
-        extraAddress += bname;
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname;
       }
-      if (buildingName !== '') {
-        extraAddress += `${extraAddress !== '' ? ', ' : ''}${buildingName}`;
+      if (data.buildingName !== '') {
+        extraAddress +=
+          extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
       }
-      address += `${extraAddress !== '' ? ` (${extraAddress})` : ''}`;
+      newAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
 
-    setFullAddress(address);
-    setIsPostCodeVisible(false);
+    setFullAddress(newAddress);
+  };
 
-    try {
-      const addressRef = doc(db, "user", userUid);
-      await updateDoc(addressRef, {
-        address: address,
-      });
-      console.log("주소가 업데이트되었습니다.");
-    } catch (error) {
-      console.error("주소 업데이트 실패:", error);
-    }
+  const handleClick = () => {
+    open({ onComplete: handleComplete });
   };
 
   return (
-    <div>
-      <div className="mb-8">
-        <Label
-          htmlFor="user_address"
-          className='flex justify-between'
-        >
-          주소
-          {fullAddress ? (
-            <p
-              onClick={() => setIsPostCodeVisible(true)}>
-              주소 변경
-            </p>
-          ) : (
-            <p onClick={() => setIsPostCodeVisible(true)} >
-              주소 검색
-            </p>
-          )}
-        </Label>
-        <Input
-          id="user_address"
-          type="text"
-          value={fullAddress}
-          readOnly
-        />
-
-        {isPostCodeVisible && (
-          <DaumPostCode
-            onComplete={handleComplete}
-            className="post-code"
-            autoClose={false}
-          />
-        )}
-      </div>
+    <div className="flex items-center">
+      <Input
+        type="text"
+        value={fullAddress}
+        readOnly
+        placeholder="주소를 선택하세요"
+        className="w-full"
+      />
+      <Button onClick={handleClick} className="ml-4">
+        {fullAddress ? '주소 변경' : '주소 검색'}
+      </Button>
     </div>
   );
 };
 
-export default KakaoMap;
-
+export default Postcode;
