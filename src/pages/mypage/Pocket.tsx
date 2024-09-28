@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import useUserStore from "@/zustand/bearsStore"; 
+import useUserStore from "@/zustand/bearsStore";
 import { ProductPocket } from '@/zustand/bearsStore';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 const Pocket = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [myPocket, setMyPocket] = useState<ProductPocket[]>([]);
   const [matchedGoods, setMatchedGoods] = useState<any[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: boolean }>({});
   const [totalPrice, setTotalPrice] = useState(0); // 총 가격 상태 추가
-  const { goods, user, setSelectedItems, selectedItems } = useUserStore();  
+  const { goods, user, setSelectedItems } = useUserStore();
   const userUid = user.length > 0 ? user[0].uid : null;
 
   useEffect(() => {
@@ -120,10 +120,15 @@ const Pocket = () => {
     const selectedItems = matchedGoods
       .filter(item => selectedProducts[item.ProductUid])
       .map(item => ({
-        ...item,  
-        ProductQuantity: quantities[item.ProductUid]  
+        ...item,
+        ProductQuantity: quantities[item.ProductUid]
       }));
-      
+
+    if (selectedItems.length === 0) {
+      alert("선택한 상품이 없습니다. 상품을 선택해주세요.");
+      return;
+    }
+
     setSelectedItems(selectedItems);
     navigate("/payment");
   };
@@ -137,8 +142,8 @@ const Pocket = () => {
             key={item.ProductUid}
             className='flex justify-between items-center mb-4'>
             <div className='flex gap-3'>
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={selectedProducts[item.ProductUid] || false}
                 onChange={() => onChangeSelectProduct(item.ProductUid)}
               />
@@ -185,10 +190,10 @@ const Pocket = () => {
         ))}
       </ul>
       <div className="flex justify-between mt-[30px]">
-        <strong className='ml-[30px] text-2xl'>총 {totalPrice}원</strong> 
+        <strong className='ml-[30px] text-2xl'>총 {totalPrice}원</strong>
         <Button
           className='w-[200px]'
-          onClick={handlePurchaseClick}  
+          onClick={handlePurchaseClick}
         >구매하기</Button>
       </div>
     </section>
