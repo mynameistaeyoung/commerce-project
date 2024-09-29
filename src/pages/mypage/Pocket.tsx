@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import useUserStore from "@/zustand/bearsStore";
@@ -12,7 +12,7 @@ const Pocket = () => {
   const [matchedGoods, setMatchedGoods] = useState<any[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: boolean }>({});
-  const [totalPrice, setTotalPrice] = useState(0); // 총 가격 상태 추가
+  const [totalPrice, setTotalPrice] = useState(0);
   const { goods, user, setSelectedItems } = useUserStore();
   const userUid = user.length > 0 ? user[0].uid : null;
 
