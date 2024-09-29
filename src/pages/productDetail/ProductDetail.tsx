@@ -3,11 +3,12 @@ import useUserStore from "@/zustand/bearsStore";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { doc, deleteDoc, setDoc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, deleteDoc} from "firebase/firestore";
 import { db, storage } from "../../firebase";
 import { deleteObject, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import Like from "@/components/like/Like";
+import Cart from "@/components/cart/Cart";
 
 const ProductDetail = () => {
     const { goods, user } = useUserStore();
@@ -31,52 +32,6 @@ const ProductDetail = () => {
             }
         } catch (error) {
             console.log("삭제를 실패하였습니다", error);
-        }
-    };
-
-    const onClickMtPocketButton = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        e.preventDefault();
-        if (!userUid || !FoundGoods) {
-            alert("로그인이 필요한 서비스입니다")
-            console.error("유저가 없거나 상품이 유효하지 않습니다.");
-            return;
-        }
-        if (quantity > FoundGoods.ProductQuantity) {
-            alert(`현재 재고(${FoundGoods.ProductQuantity}개)보다 많은 수량을 담을 수 없습니다.`);
-            return;
-        }
-        const pocketRef = doc(db, "pocket", userUid);
-        try {
-            const pocketDoc = await getDoc(pocketRef);
-            if (pocketDoc.exists()) {
-                const existingProducts = pocketDoc.data().Products || {};
-                existingProducts[FoundGoods.ProductUid] = {
-                    ProductName: FoundGoods.ProductName,
-                    ProductPrice: productAllPrice,
-                    ProductUid: FoundGoods.ProductUid,
-                    ProductQuantity: quantity,
-                    userUid: userUid,
-                };
-                await updateDoc(pocketRef, {
-                    Products: existingProducts,
-                });
-            } else {
-                await setDoc(pocketRef, {
-                    Products: {
-                        [FoundGoods.ProductUid]: {
-                            ProductName: FoundGoods.ProductName,
-                            ProductPrice: productAllPrice,
-                            ProductUid: FoundGoods.ProductUid,
-                            ProductQuantity: quantity,
-                            userUid: userUid,
-                        },
-                    },
-                });
-            }
-            console.log("포켓에 저장되었습니다.");
-            alert("장바구니 담기 완료!");
-        } catch (error) {
-            console.error("포켓에 저장 중 오류 발생:", error);
         }
     };
 
@@ -134,7 +89,7 @@ const ProductDetail = () => {
                                     </div>
                                 </div>
                                 <Button className="mr-3">구매하기</Button>
-                                <Button onClick={onClickMtPocketButton}>장바구니</Button>
+                                <Cart quantity={quantity} productAllPrice={productAllPrice} css={""} cartMsg={"장바구니"} cartImg="" productUid={FoundGoods.ProductUid}/>
                             </div>
                         </div>
                     </div>
