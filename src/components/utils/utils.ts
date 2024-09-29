@@ -1,7 +1,6 @@
 import { doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 
-// 공통 주소 추가 함수
 export const addNewAddressToUser = async (userUid: string, newAddress: string) => {
     try {
         const addressRef = doc(db, 'user', userUid);
