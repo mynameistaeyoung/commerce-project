@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom"
 const RetouchProduct = () => {
 
   const { goods, updateGoods } = useUserStore()
-  const { ProductUid } = useParams();
+  const { ProductUid } = useParams() as { ProductUid: string };
   const FoundGoods = goods.find(item => item.ProductUid === ProductUid)
 
   const [showImages, setShowImages] = useState<string | ArrayBuffer | null>(null);
@@ -22,6 +22,7 @@ const RetouchProduct = () => {
   const [changeProductURL, setChangeProductURL] = useState(`${FoundGoods?.ProductURL}`)
   const [changeProductDescription, setChangeProductDescription] = useState(`${FoundGoods?.ProductDescription}`)
   const [changeProductPrice, setChangeProductPrice] = useState(`${FoundGoods?.ProductPrice}`)
+  const [changeProductQuantity, setChangeProductQuantity] = useState(`${FoundGoods?.ProductQuantity}`)
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
@@ -63,6 +64,7 @@ const RetouchProduct = () => {
         ProductDescription: changeProductDescription,
         ProductPrice: changeProductPrice,
         UserUid: FoundGoods?.UserUid,
+        ProductQuantity: +changeProductQuantity
       })
       navigate("/")
     } catch (error) {
@@ -92,11 +94,11 @@ const RetouchProduct = () => {
                 id="change-product-picture"
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange} // 이미지 변경 핸들러
+                onChange={handleImageChange}
               />
             </div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col gap-5 h-[450px]">
             <div>
               <Label htmlFor="change-product-name">상품명</Label>
               <Input
@@ -109,9 +111,9 @@ const RetouchProduct = () => {
             </div>
             <div>
               <Label htmlFor="change-product-description">상품설명</Label>
-              <div className="h-[282px] border border-gray-400 rounded-md">
+              <div className="h-[150px] border border-gray-400 rounded-md">
                 <input
-                  className="border-0 focus:outline-none focus:ring-0 w-full"
+                  className="border-0 focus:outline-none focus:ring-0 w-full h-full px-2 py-1"
                   type="text"
                   id="change-product-description"
                   value={changeProductDescription}
@@ -119,15 +121,27 @@ const RetouchProduct = () => {
                 />
               </div>
             </div>
-            <div>
-              <Label htmlFor="change-product-price">가격</Label>
-              <Input
-                className=" border-gray-400 mb-5"
-                type="number"
-                id="change-product-price"
-                value={changeProductPrice}
-                onChange={(e) => setChangeProductPrice(e.target.value)}
-              />
+            <div className="flex gap-5">
+              <div className="flex-1">
+                <Label htmlFor="change-product-price">가격</Label>
+                <Input
+                  className=" border-gray-400 mb-5"
+                  type="number"
+                  id="change-product-price"
+                  value={changeProductPrice}
+                  onChange={(e) => setChangeProductPrice(e.target.value)}
+                />
+              </div>
+              <div className="flex-1">
+                <Label htmlFor="product-quantity">상품수량</Label>
+                <Input
+                  className="border-gray-400 mb-5"
+                  type="number"
+                  id="product-quantity"
+                  value={changeProductQuantity}
+                  onChange={(e) => { setChangeProductQuantity(e.target.value) }}
+                />
+              </div>
             </div>
           </div>
         </div>
