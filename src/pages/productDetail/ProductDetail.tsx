@@ -17,8 +17,7 @@ const ProductDetail = () => {
     const navigate = useNavigate();
 
     const [quantity, setQuantity] = useState(1);
-    const [productAllPrice, setProductAllPrice] = useState(FoundGoods?.ProductPrice)
-
+    const [productAllPrice, setProductAllPrice] = useState<number | string>(FoundGoods?.ProductPrice || 0);
     const ProductDeleteButton = async (e: any) => {
         e.preventDefault();
         try {
@@ -35,7 +34,7 @@ const ProductDetail = () => {
         }
     };
 
-    const onClickMtPocketButton = async (e: any) => {
+    const onClickMtPocketButton = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         e.preventDefault();
         if (!userUid || !FoundGoods) {
             alert("로그인이 필요한 서비스입니다")
@@ -83,7 +82,7 @@ const ProductDetail = () => {
 
     useEffect(() => {
         FoundGoods ?
-            setProductAllPrice(quantity * +(FoundGoods?.ProductPrice)) :
+            setProductAllPrice(quantity * +(FoundGoods.ProductPrice || 0)) :
             null
     }, [quantity])
 
