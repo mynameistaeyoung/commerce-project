@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { db, auth } from "../../firebase";
+import { db } from "../../firebase";
 import { ProductLike } from "@/zustand/bearsStore";
 import useUserStore from "@/zustand/bearsStore";
 import { doc, getDoc } from "firebase/firestore";
