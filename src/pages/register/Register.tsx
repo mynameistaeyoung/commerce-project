@@ -25,7 +25,7 @@ const Register = () => {
   const [seller, setSeller] = useState(false)
   const [fullAddress, setFullAddress] = useState("");
 
-  const onChange = (event: any) => {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { id, value },
     } = event;
@@ -46,7 +46,7 @@ const Register = () => {
     }
   }
 
-  const signUp = async (event: any) => {
+  const signUp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
