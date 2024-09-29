@@ -5,6 +5,7 @@ import { auth, db } from "../../firebase"
 import useUserStore from "@/zustand/bearsStore"
 import { useEffect, useState } from "react"
 import { collection, getDocs, query, where } from "firebase/firestore"
+import { GoodsItem } from "@/zustand/bearsStore"
 
 const Header = () => {
     const [searchKeyword, setSearchKeyword] = useState("");
@@ -14,7 +15,7 @@ const Header = () => {
 
     const navigate = useNavigate();
 
-    const logOut = async (e: any) => {
+    const logOut = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         e.preventDefault();
         await signOut(auth);
         clearUser();
@@ -44,7 +45,7 @@ const Header = () => {
             where("ProductName", "<=", searchKeyword + "\uf8ff")
         );
         const resSnap = await getDocs(q);
-        const searchResults = resSnap.docs.map(doc => doc.data());
+        const searchResults = resSnap.docs.map(doc => doc.data() as GoodsItem);
         setSearch(searchResults)
     };
 
