@@ -1,14 +1,13 @@
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useEffect, useState } from "react";
 import Header from "@/components/header/Header";
 import useUserStore from "@/zustand/bearsStore";
-import KakaoMap from "@/components/map/KakaoMap";
-import { db } from '../../firebase';
+import Postcode from "@/components/map/KakaoMap";
+import { addNewAddressToUser, fetchUserAddresses } from '@/components/utils/utils';
+import { Button } from "@/components/ui/button";
 
 const Payment = () => {
     const { user, selectedItems } = useUserStore();
     const FoundUser = user.length > 0 ? user[0] : null;
-
     const [address, setAddress] = useState<string>(FoundUser?.addresses || "");
     const [addressList, setAddressList] = useState<string[]>([]);
     const [addNewAddress, setAddNewAddress] = useState<boolean>(false);
@@ -26,16 +25,11 @@ const Payment = () => {
         const fetchAddresses = async () => {
             if (!userUid) return;
 
-            try {
-                const docRef = doc(db, 'user', userUid);
-                const docSnap = await getDoc(docRef);
+            const addresses = await fetchUserAddresses(userUid);
+            setAddressList(addresses);
 
-                if (docSnap.exists()) {
-                    const userData = docSnap.data();
-                    setAddressList(userData.addresses || []);
-                }
-            } catch (error) {
-                console.error("주소 목록을 불러오는 중 오류 발생:", error);
+            if (addresses.length > 0) {
+                setAddress(addresses[0]);
             }
         };
 
@@ -53,21 +47,22 @@ const Payment = () => {
     };
 
     const handlePayment = async () => {
-        if (addNewAddress && newAddress) {
-            try {
-                const addressRef = doc(db, 'user', userUid!);
-                await updateDoc(addressRef, {
-                    addresses: arrayUnion(newAddress),
-                });
-                setAddressList(prev => [...prev, newAddress]);
-                console.log("새 주소가 추가되었습니다.");
-                alert("주소가 성공적으로 추가되었습니다.");
-            } catch (error) {
-                console.error("주소 추가에 실패했습니다:", error);
-            }
-        }
         alert("결제가 완료되었습니다.");
     };
+
+    const addressPlusButton = async () => {
+        if (addNewAddress && newAddress) {
+            const success = await addNewAddressToUser(userUid!, newAddress);
+            if (success) {
+                setAddressList(prev => [...prev, newAddress]);
+                setAddress(newAddress);
+                setAddNewAddress(false);
+                alert("주소가 성공적으로 추가되었습니다.");
+            } else {
+                alert("주소 추가에 실패했습니다.");
+            }
+        }
+    }
 
     return (
         <>
@@ -80,7 +75,7 @@ const Payment = () => {
                             <h2 className="text-xl font-semibold mb-4">배송지 정보</h2>
                             <div className="bg-gray-100 p-4 rounded-lg mb-3">
                                 <p className="mb-2"><strong>이름:</strong> {FoundUser?.name}</p>
-                                <p className="mb-2"><strong>선택한 주소:</strong> {address}</p>
+                                <p className="mb-2"><strong>선택한 주소:</strong> {address || "주소를 선택하세요"}</p>
                             </div>
 
                             <h3 className="text-lg font-semibold mb-2">기존 주소 선택</h3>
@@ -99,11 +94,21 @@ const Payment = () => {
                             </select>
 
                             {addNewAddress && (
-                                <KakaoMap fullAddress={newAddress} setFullAddress={setNewAddress} userUid={FoundUser?.uid} />
+                                <>
+                                    <Postcode
+                                        fullAddress={newAddress}
+                                        setFullAddress={setNewAddress}
+                                        userUid={FoundUser?.uid}
+                                    />
+                                    <Button
+                                        onClick={addressPlusButton}
+                                        className="mt-5 flex justify-end">
+                                        주소 추가
+                                    </Button>
+                                </>
                             )}
                         </div>
 
-                        {/* 주문 상품 */}
                         <div className="order-items">
                             <h2 className="text-xl font-semibold mb-4">주문 상품</h2>
                             <ul className="space-y-4">
@@ -131,7 +136,6 @@ const Payment = () => {
                             </ul>
                         </div>
 
-                        {/* 결제 정보 */}
                         <div className="payment-section">
                             <h2 className="text-xl font-semibold mb-4">결제 정보</h2>
                             <div className="bg-gray-100 p-4 rounded-lg">
@@ -156,6 +160,9 @@ const Payment = () => {
 };
 
 export default Payment;
+
+
+
 
 
 
