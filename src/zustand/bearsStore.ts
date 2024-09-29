@@ -17,7 +17,7 @@ export interface GoodsItem {
     ProductPrice: string | undefined;
     ProductURL: string;
     UserUid: string | undefined;
-    ProductUid: string;
+    ProductUid: string ;
     ProductQuantity: number;
 }
 
