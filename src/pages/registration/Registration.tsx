@@ -25,7 +25,7 @@ const Registration = () => {
 
     const navigate = useNavigate()
 
-    const onClickRegistrationButtonHandler = async (e: any) => {
+    const onClickRegistrationButtonHandler = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         e.preventDefault();
 
         if (!selectedFile) {
