@@ -28,12 +28,12 @@ const Like = ({ ProductUid }: { ProductUid?: string }) => {
             console.log("좋아요 상태 불러오기 중 오류 발생:", error);
         }
     };
-    
+
     useEffect(() => {
         fetchLikeStatus();
     }, [ProductUid, userUid]);
 
-    const onClickLikeButton = async (e: any) => {
+    const onClickLikeButton = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         e.preventDefault();
         if (!userUid || !ProductUid || !FoundGoods) {
             alert("로그인이 필요합니다.");
