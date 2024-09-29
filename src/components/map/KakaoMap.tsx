@@ -9,7 +9,6 @@ interface PostcodeProps {
 }
 
 const Postcode: React.FC<PostcodeProps> = ({
-  userUid,
   fullAddress,
   setFullAddress,
 }) => {
