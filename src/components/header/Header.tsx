@@ -38,7 +38,6 @@ const Header = () => {
             alert("검색어를 입력해주세요.");
             return;
         }
-
         const q = query(
             collection(db, "goods"),
             where("ProductName", ">=", searchKeyword),
@@ -54,48 +53,88 @@ const Header = () => {
         navigate("/");
     };
 
+    const onClickPocketButton = () => {
+        if (FoundUser) {
+            navigate('/mypage', { state: { activeMenu: '장바구니' } })
+        } else {
+            alert("로그인이 필요한 서비스입니다.")
+            navigate("/login")
+        }
+    }
 
+    const onClickLikeButton = () => {
+        if (FoundUser) {
+            navigate('/mypage', { state: { activeMenu: '찜한항목' } })
+        } else {
+            alert("로그인이 필요한 서비스입니다.")
+            navigate("/login")
+        }
+    }
 
     return (
         <header className="w-[60%] mx-auto">
             <div className="flex justify-end">
-                {FoundUser?.seller === true ?
+                {FoundUser?.seller === true ? (
                     <div className="flex">
                         <button onClick={registrationRoot} className="mr-2">상품등록하기</button>
                         <div>|</div>
                         &nbsp;
-                    </div> :
-                    null}
-                <button onClick={privateMypage} className="mr-2">마이페이지</button>
-                <div>|</div>
-                &nbsp;
-                <button
-                    className="mr-2"
-                    onClick={() => { navigate('/mypage', { state: { activeMenu: '장바구니' } }) }}
-                >장바구니</button>
-                <div>|</div>
+                    </div>
+                ) : null}
+                {FoundUser ? (
+                    <>
+                        <button onClick={privateMypage} className="mr-2">마이페이지</button>
+                        <div>|</div>
+                        &nbsp;
+                    </>
+                ) : (
+                    <>
+                        <button className="text-blue-400" onClick={() => { navigate("/register") }}>회원가입</button>
+                        &nbsp;
+                        <div>|</div>
+                    </>
+                )}
                 &nbsp;
                 <button onClick={logOut} className="mr-2">{FoundUser ? "로그아웃" : "로그인"}</button>
             </div>
-            <div className="flex items-center">
-                <button onClick={resetSearch} className="text-3xl font-bold">패션앱</button>
-                <div className="relative flex-1">
-                    <Input
-                        className="rounded-2xl border-gray-300 flex-1 h-12"
-                        placeholder="원하시는 상품을 입력해주세요!"
-                        value={searchKeyword}
-                        onChange={(e) => setSearchKeyword(e.target.value)}
-                    />
-                    <button
-                        onClick={searchData}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white rounded-full px-4 py-2"
-                    >
-                        <img src="/Search.png" />
+
+            <div className="flex items-center justify-between mt-4">
+                <button
+                    onClick={resetSearch}
+                    className="text-3xl font-bold text-blue-400 flex-shrink-0 whitespace-nowrap"
+                >
+                    패션앱
+                </button>
+
+                <div className="relative w-full max-w-[400px] mx-4">
+                    <div className="relative">
+                        <Input
+                            className="rounded-2xl border-blue-400 w-full h-10 text-[14px] pr-10 pl-4 focus:outline-none"
+                            placeholder="원하시는 상품을 입력해주세요!"
+                            value={searchKeyword}
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                        />
+                        <img
+                            src="/Search.png"
+                            alt="검색"
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer"
+                            onClick={searchData}
+                        />
+                    </div>
+                </div>
+
+                <div className="flex space-x-4 flex-shrink-0">
+                    <button onClick={onClickPocketButton}>
+                        <img src="/free-icon-add-cart-4175027.png" alt="장바구니" className="w-6 h-6" />
+                    </button>
+                    <button onClick={onClickLikeButton}>
+                        <img src="/free-icon-heart-1077035.png" alt="찜목록" className="w-6 h-6" />
                     </button>
                 </div>
             </div>
         </header>
     );
+
 };
 
-export default Header;
+export default Header; 
