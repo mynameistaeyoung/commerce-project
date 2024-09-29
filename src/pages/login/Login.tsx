@@ -11,14 +11,14 @@ import { User } from "@/zustand/bearsStore";
 
 const Login = () => {
 
-    const {setUser}=useUserStore()
+    const { setUser } = useUserStore()
 
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const onChange = (event: any) => {
+    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {
             target: { id, value },
         } = event;
@@ -55,7 +55,7 @@ const Login = () => {
     return (
         <div className="w-[80%] min-h-screen flex justify-center items-center gap-10 max-w-screen-lg min-w-[1000px] mx-auto">
             <div className="flex-1">
-                <h1 className="text-3xl font-bold mb-8 hover:cursor-pointer" onClick={()=>{navigate("/")}}>패션앱에 오신 것을 환영합니다!</h1>
+                <h1 className="text-3xl font-bold mb-8 hover:cursor-pointer" onClick={() => { navigate("/") }}>패션앱에 오신 것을 환영합니다!</h1>
             </div>
 
             <div className="w-full max-w-xl mx-auto flex-1">
