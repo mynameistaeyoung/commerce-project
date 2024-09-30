@@ -17,7 +17,7 @@ export interface GoodsItem {
     ProductPrice: string | undefined;
     ProductURL: string;
     UserUid: string | undefined;
-    ProductUid: string ;
+    ProductUid: string;
     ProductQuantity: number;
 }
 
@@ -43,7 +43,7 @@ interface UserStore {
     search: GoodsItem[];
     selectedItems: ProductPocket[];
     setUser: (userData: User) => void;
-    setGoods: (goodsData: GoodsItem) => void;
+    setGoods: (goodsData: GoodsItem[]) => void;
     setLike: (likeData: ProductLike) => void;
     clearUser: () => void,
     updateGoods: (updatedGoods: GoodsItem) => void;
@@ -60,10 +60,10 @@ const useUserStore = create<UserStore>()(
             like: [],
             search: [],
             selectedItems: [],
-            setUser: (userData: User) => set(() =>
-                ({ user: [userData] })),
-            setGoods: (goodsData: GoodsItem) => set((state) =>
-                ({ goods: [...state.goods, goodsData] })),
+            setUser: (userData: User) => set(() => ({ user: [userData] })),
+            setGoods: (goodsData: GoodsItem[]) => set(() => ({
+                goods: goodsData,
+            })),
             updateGoods: (updatedGoods: GoodsItem) => set((state) => ({
                 goods: state.goods.map((item) =>
                     item.ProductUid === updatedGoods.ProductUid ? updatedGoods : item
@@ -75,11 +75,15 @@ const useUserStore = create<UserStore>()(
                     item.uid === updatedUser.uid ? updatedUser : item
                 ),
             })),
-            setLike: (likeData: ProductLike) => set((state) =>
-                ({ like: [...state.like, likeData] })),
-            setSearch: (searchData: GoodsItem[]) => set(() =>
-                ({ search: searchData })),
-            setSelectedItems: (items) => set(() => ({ selectedItems: items })),
+            setLike: (likeData: ProductLike) => set((state) => ({
+                like: [...state.like, likeData],
+            })),
+            setSearch: (searchData: GoodsItem[]) => set(() => ({
+                search: searchData,
+            })),
+            setSelectedItems: (items) => set(() => ({
+                selectedItems: items,
+            })),
         }),
         {
             name: 'user-storage',
