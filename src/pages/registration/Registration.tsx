@@ -65,8 +65,8 @@ const Registration = () => {
         }
     }
 
-    const handleImageChange = (e: any) => {
-        const file = e.target.files[0];
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
         if (file) {
             setSelectedFile(file);
 
