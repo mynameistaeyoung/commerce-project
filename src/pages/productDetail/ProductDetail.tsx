@@ -54,7 +54,7 @@ const ProductDetail = () => {
                                 <Like ProductUid={ProductUid} />
                             </div>
                             <div className="mb-10">
-                                <div className="font-bold text-3xl">{productAllPrice}원</div>
+                                <div className="font-bold text-3xl">{productAllPrice.toLocaleString()}원</div>
                                 <div className="font-bold text-3xl">{FoundGoods.ProductDescription}</div>
                                 {FoundGoods.ProductQuantity < 10 ?
                                     <div className="text-red-500">현재 남은 수량:{FoundGoods.ProductQuantity}개</div>
