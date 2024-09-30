@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site" : "realLast-pjt"
+    "site" : "realLast-pjt",
     "public": "build",
     "ignore": [
       "firebase.json",
