@@ -172,7 +172,7 @@ const Register = () => {
           <Checkbox
             id="seller"
             className="mb-5 mr-2"
-            value={seller}
+            checked={seller}
             onClick={() => { setSeller(!seller) }}
           />
           <Label htmlFor="seller">판매자입니까?</Label>
