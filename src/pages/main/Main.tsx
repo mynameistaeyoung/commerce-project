@@ -1,6 +1,6 @@
 import Header from "@/components/header/Header"
 import { useEffect, useState } from "react"
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase"
 import { GoodsItem } from "@/zustand/bearsStore";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import Cart from "@/components/cart/Cart";
 const Main = () => {
     const [product, setProduct] = useState<GoodsItem[]>([]);
     const [searchData, setSearchData] = useState<GoodsItem[]>([]);
-    const { goods, setGoods, search } = useUserStore();
+    const { setGoods, search } = useUserStore();
 
     const cartCss = "border border-gray-300 rounded-md bg-white text-black h-[25px] mt-[15px] w-full mb-[10px]"
     const cartImg = "/free-icon-add-cart-4175027.png"
@@ -18,25 +18,16 @@ const Main = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (goods.length > 0) {
-            setProduct(goods);
-            return;
-        }
-        const fetchData = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, "goods"));
-                const goodsArr: GoodsItem[] = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data() as GoodsItem;
-                    goodsArr.push(data);
-                    setGoods(data);
-                });
-                setProduct(goodsArr);
-            } catch (error) {
-                console.error("데이터를 가져오는 중 에러 발생:", error);
-            }
-        };
-        fetchData();
+        const unsubscribe = onSnapshot(collection(db, "goods"), (snapshot) => {
+            const goodsArr: GoodsItem[] = []
+            snapshot.forEach((doc) => {
+                const data = doc.data() as GoodsItem
+                goodsArr.push(data)
+            })
+            setGoods(goodsArr)
+            setProduct(goodsArr)
+        })
+        return () => unsubscribe()
     }, []);
 
     useEffect(() => {
@@ -55,7 +46,7 @@ const Main = () => {
                         <Cart quantity={1} productAllPrice={item.ProductPrice} css={cartCss} cartMsg={cartMsg} cartImg={cartImg} productUid={item.ProductUid} />
                         <div onClick={() => { navigate(`/productDetail/${item.ProductUid}`) }}>
                             <p className="font-weight">{item.ProductName}</p>
-                            <p className="font-bold">{item.ProductPrice}원</p>
+                            <p className="font-bold">{Number(item.ProductPrice)?.toLocaleString()}원</p>
                         </div>
                     </li>
                 ))}
