@@ -12,13 +12,14 @@ import Cart from "@/components/cart/Cart";
 
 const ProductDetail = () => {
     const { goods, user } = useUserStore();
-    const { ProductUid } = useParams();
+    const { ProductUid } = useParams<{ ProductUid: string }>();
     const FoundGoods = goods.find(item => item.ProductUid === ProductUid);
     const userUid = user.length > 0 ? user[0].uid : null;
     const navigate = useNavigate();
 
     const [quantity, setQuantity] = useState(1);
     const [productAllPrice, setProductAllPrice] = useState<number | string>(FoundGoods?.ProductPrice || 0);
+    
     const ProductDeleteButton = async (e: React.MouseEvent<HTMLElement,MouseEvent>) => {
         e.preventDefault();
         
