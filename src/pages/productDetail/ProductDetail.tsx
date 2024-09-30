@@ -19,8 +19,9 @@ const ProductDetail = () => {
 
     const [quantity, setQuantity] = useState(1);
     const [productAllPrice, setProductAllPrice] = useState<number | string>(FoundGoods?.ProductPrice || 0);
-    const ProductDeleteButton = async (e: any) => {
+    const ProductDeleteButton = async (e: React.MouseEvent<HTMLElement,MouseEvent>) => {
         e.preventDefault();
+        
         try {
             if (confirm("정말 삭제하시겠습니까?") === true) {
                 await deleteDoc(doc(db, "goods", ProductUid!));
@@ -36,16 +37,17 @@ const ProductDetail = () => {
     };
 
     useEffect(() => {
-        FoundGoods ?
-            setProductAllPrice(quantity * +(FoundGoods.ProductPrice || 0)) :
-            null
-    }, [quantity])
+        if(FoundGoods){
+            setProductAllPrice(quantity * +(FoundGoods.ProductPrice || 0))
+        }
+    }, [quantity, FoundGoods])
 
     return (
         <>
             <Header />
             <div className="w-[60%] mx-auto mt-[40px]">
                 {FoundGoods ? (
+                    <>
                     <div className="flex">
                         <img src={FoundGoods.ProductURL} className="aspect-1/1 w-[60%] mr-4" alt={FoundGoods.ProductName} />
                         <div className="mt-[60px]">
@@ -93,7 +95,8 @@ const ProductDetail = () => {
                             </div>
                         </div>
                     </div>
-                ) : (alert("상품 정보를 불러올 수 없습니다"))}
+                    </>
+                ) : ("상품 정보를 불러올 수 없습니다")}
             </div>
         </>
     );
