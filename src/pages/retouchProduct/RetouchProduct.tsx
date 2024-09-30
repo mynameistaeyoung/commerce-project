@@ -43,11 +43,10 @@ const RetouchProduct = () => {
   const onClickUpdateProductButton = async (e: any) => {
     e.preventDefault();
     try {
-      let productImageUrl = changeProductURL;
       if (selectedFile) {
         const storageRef = ref(storage, `product/${ProductUid}`);
         await uploadBytes(storageRef, selectedFile);
-        productImageUrl = await getDownloadURL(storageRef);
+        await getDownloadURL(storageRef);
       }
       const uid = ProductUid
       const ProductUpdateRef = doc(db, "goods", uid!)
