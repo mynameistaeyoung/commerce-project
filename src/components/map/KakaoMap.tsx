@@ -47,7 +47,7 @@ const Postcode: React.FC<PostcodeProps> = ({
         placeholder="주소를 선택하세요"
         className="w-full"
       />
-      <Button onClick={handleClick} className="ml-4">
+      <Button onClick={handleClick} className="ml-4" type="button">
         {fullAddress ? '주소 변경' : '주소 검색'}
       </Button>
     </div>
