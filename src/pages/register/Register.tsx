@@ -8,7 +8,7 @@ import { auth, db } from "@/firebase";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import useUserStore from "@/zustand/bearsStore";
-import KakaoMap from "@/components/map/KakaoMap";
+import Postcode from "@/components/map/KakaoMap";
 
 
 const Register = () => {
@@ -163,7 +163,8 @@ const Register = () => {
             onChange={onChange}
           />
         </div>
-        <KakaoMap
+        <p className="font-bold">주소</p>
+        <Postcode
           fullAddress={fullAddress}
           setFullAddress={setFullAddress}
         />
