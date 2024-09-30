@@ -10,6 +10,7 @@ import { setDoc, doc } from "firebase/firestore"
 import { auth, db } from "../../firebase"
 import uuid from 'react-uuid'
 import useUserStore from "@/zustand/bearsStore"
+import { GoodsItem } from "@/zustand/bearsStore"
 
 const Registration = () => {
 
@@ -41,7 +42,8 @@ const Registration = () => {
                 console.log("업로드 성공:", snapshot);
                 const uid = auth.currentUser?.uid
                 const downloadURL = await getDownloadURL(snapshot.ref);
-                await setDoc(doc(db, 'goods', productUuid), {
+
+                const newGoodsItem: GoodsItem = {
                     ProductDescription: productDescription,
                     ProductName: productName,
                     ProductPrice: productPrice,
@@ -49,18 +51,11 @@ const Registration = () => {
                     UserUid: uid,
                     ProductUid: productUuid,
                     ProductQuantity: productQuantity
-                });
-                setGoods({
-                    ProductDescription: productDescription,
-                    ProductName: productName,
-                    ProductPrice: productPrice,
-                    ProductURL: downloadURL,
-                    UserUid: uid,
-                    ProductUid: productUuid,
-                    ProductQuantity: productQuantity
-                })
+                }
+                await setDoc(doc(db, "goods", productUuid), newGoodsItem)
+                setGoods([newGoodsItem])
                 navigate("/");
-            }else{
+            } else {
                 alert("상품수량을 1개이상 등록하셔야 합니다.")
             }
         } catch (error) {
